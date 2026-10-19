@@ -194,6 +194,15 @@ function render() {
   const tab = { home: 'home', quiz: 'quiz', 'quiz-run': 'quiz', 'quiz-end': 'quiz', passage: 'quiz', listen: 'listen', 'listen-item': 'listen', write: 'write', 'write-edit': 'write', speak: 'speak', 'speak-run': 'speak', cards: 'cards', 'cards-run': 'cards', 'cards-end': 'cards' }[route.name];
   document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
 }
+/* Botón de dos toques para acciones destructivas (sin confirm(), que no funciona en todos los entornos). */
+function confirmTap(btn, askLabel, action) {
+  const orig = btn.textContent;
+  let armed = false, t = null;
+  btn.addEventListener('click', () => {
+    if (!armed) { armed = true; btn.textContent = askLabel; t = setTimeout(() => { armed = false; btn.textContent = orig; }, 3500); return; }
+    clearTimeout(t); armed = false; btn.textContent = orig; action();
+  });
+}
 const header = (title, sub) => el('div', { class: 'hdr' }, el('div', { class: 'logo' }, 'GP'), el('div', null, el('h1', null, title), sub && el('p', null, sub)));
 const back = (to, label) => el('button', { class: 'btn small ghost', onclick: () => go(to) }, '← ' + (label || 'Volver'));
 
@@ -291,7 +300,9 @@ VIEWS.home = function () {
   root.append(ch);
   const foot = el('div', { class: 'row wrap', style: 'margin-top:14px' });
   if (deferredInstall) foot.append(el('button', { class: 'btn small', onclick: async () => { deferredInstall.prompt(); try { await deferredInstall.userChoice; } catch (e) { /* nada */ } deferredInstall = null; render(); } }, '📲 Instalar app'));
-  foot.append(el('button', { class: 'btn small ghost', onclick: () => { if (confirm('¿Borrar todo tu progreso en este dispositivo?')) { Store.reset(); render(); } } }, 'Borrar progreso'));
+  const resetBtn = el('button', { class: 'btn small ghost' }, 'Borrar progreso');
+  confirmTap(resetBtn, '¿Seguro? Pulsa otra vez', () => { Store.reset(); render(); });
+  foot.append(resetBtn);
   root.append(foot, el('p', { class: 'muted small' }, 'Tu progreso se guarda solo en este dispositivo. Preguntas y textos originales para practicar; no son del examen oficial.'));
   return root;
 };
@@ -573,9 +584,14 @@ VIEWS['write-edit'] = function (r) {
   }
   drawBank();
   root.append(el('div', { class: 'row between', style: 'margin-bottom:8px' }, timer, tBtn), el('details', null, el('summary', null, '📎 Frases útiles (toca para insertar)'), tabsBox, phrBox), ta, out);
-  root.append(el('div', { class: 'row wrap', style: 'margin-top:10px' },
-    el('button', { class: 'btn small', onclick: async () => { try { await navigator.clipboard.writeText(ta.value); alert('Copiado. Pégalo en el chat para que te lo corrija.'); } catch (e) { ta.select(); } } }, '📋 Copiar texto'),
-    el('button', { class: 'btn small ghost', onclick: () => { if (confirm('¿Borrar este borrador?')) { ta.value = ''; draw(); save(); } } }, 'Borrar')));
+  const copyBtn = el('button', { class: 'btn small' }, '📋 Copiar texto');
+  copyBtn.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(ta.value); copyBtn.textContent = '✓ Copiado'; } catch (e) { ta.focus(); ta.select(); copyBtn.textContent = 'Seleccionado: cópialo'; }
+    setTimeout(() => { copyBtn.textContent = '📋 Copiar texto'; }, 2500);
+  });
+  const delBtn = el('button', { class: 'btn small ghost' }, 'Borrar');
+  confirmTap(delBtn, '¿Seguro? Pulsa otra vez', () => { ta.value = ''; draw(); save(); });
+  root.append(el('div', { class: 'row wrap', style: 'margin-top:10px' }, copyBtn, delBtn));
   draw();
   return root;
 };
@@ -768,7 +784,9 @@ function boot() {
   document.querySelectorAll('.nav button').forEach(b => b.addEventListener('click', () => go({ name: b.dataset.tab })));
   window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; if (route.name === 'home') render(); });
   render();
-  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => { /* sin SW */ });
+  try {
+    if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => { /* sin SW */ });
+  } catch (e) { /* entorno sin service workers */ }
 }
 window.GP = { QUIZ, PASSAGES, LISTENING, DECKS, WRITING, SPEAKING, LINT_RULES, analyzeWriting, analyzeSpeech, stamps, Store, go, pickSim, isOk, norm, getRoute: () => route };
 boot();
