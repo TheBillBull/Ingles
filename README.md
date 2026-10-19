@@ -15,11 +15,12 @@ Las preguntas y los textos son originales, para practicar; no son del examen ofi
 
 ## Usarla en el móvil
 
-1. En GitHub: **Settings → Pages → Source: Deploy from a branch**, rama `claude/gracious-fermi-o3hph3` y carpeta `/docs`.
-2. Abre `https://thebillbull.github.io/Ingles/` en Chrome (Android) o Safari (iOS).
-3. Menú del navegador → **Instalar app** / **Añadir a pantalla de inicio**.
+1. Abre `https://thebillbull.github.io/Ingles/` en Chrome (Android) o Safari (iOS). Se publica desde la rama `gh-pages`, que contiene el contenido de `docs/`.
+2. Menú del navegador → **Instalar app** / **Añadir a pantalla de inicio**.
 
 Para probarla en local basta con abrir `docs/index.html` en el navegador (o `npx serve docs`).
+
+Para publicar cambios: edita `src/`, ejecuta `node build.js`, haz commit y lanza `./deploy.sh`.
 
 ## Notas
 
