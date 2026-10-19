@@ -1,0 +1,17 @@
+{
+  "name": "Guiri Pass · Cambridge Skills Test",
+  "short_name": "Guiri Pass",
+  "description": "Entrenador para el Cambridge English Skills Test: quiz, listening, writing, speaking y flashcards.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0e171b",
+  "theme_color": "#17796d",
+  "lang": "es",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

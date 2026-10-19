@@ -1,0 +1,1614 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guiri Pass</title>
+<meta name="description" content="Entrenador para el Cambridge English Skills Test: quiz, listening, writing, speaking y flashcards.">
+<meta name="theme-color" content="#17796d">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Guiri Pass">
+<style>
+:root {
+  --bg: #f4f7f7; --surface: #ffffff; --text: #16232b; --muted: #55666e; --line: #d9e2e4;
+  --accent: #17796d; --accent-ink: #ffffff; --accent-soft: #e1f2ef;
+  --ok: #1a7f4a; --ok-soft: #dff3e6; --bad: #b83247; --bad-soft: #fbe3e7;
+  --warn: #8a5a0b; --warn-soft: #fcefd0; --stamp: #b9380b; --shadow: 0 1px 2px rgba(10, 30, 40, .06), 0 4px 14px rgba(10, 30, 40, .05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e171b; --surface: #16222a; --text: #e8eef0; --muted: #9bafb7; --line: #2a3b44;
+    --accent: #3fc6b4; --accent-ink: #052320; --accent-soft: #14393a;
+    --ok: #52cf8b; --ok-soft: #143626; --bad: #ff8294; --bad-soft: #3d1a22;
+    --warn: #f0bd5c; --warn-soft: #3a2d12; --stamp: #ff9163; --shadow: none; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e171b; --surface: #16222a; --text: #e8eef0; --muted: #9bafb7; --line: #2a3b44;
+  --accent: #3fc6b4; --accent-ink: #052320; --accent-soft: #14393a;
+  --ok: #52cf8b; --ok-soft: #143626; --bad: #ff8294; --bad-soft: #3d1a22;
+  --warn: #f0bd5c; --warn-soft: #3a2d12; --stamp: #ff9163; --shadow: none; color-scheme: dark;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { color-scheme: light dark; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+.app { max-width: 720px; margin: 0 auto; padding: 16px max(16px, env(safe-area-inset-right, 0px)) 104px max(16px, env(safe-area-inset-left, 0px)); }
+h1, h2, h3 { line-height: 1.2; margin: 0 0 8px; }
+h1 { font-size: 1.55rem; } h2 { font-size: 1.2rem; } h3 { font-size: 1.02rem; }
+p { margin: 0 0 10px; }
+em { font-style: italic; }
+.muted { color: var(--muted); }
+.small { font-size: .86rem; }
+.hdr { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.logo { width: 44px; height: 44px; border-radius: 12px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-weight: 800; font-size: 1.05rem; letter-spacing: .5px; flex: none; }
+.hdr h1 { margin: 0; font-size: 1.25rem; }
+.hdr p { margin: 0; font-size: .86rem; color: var(--muted); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin: 0 0 12px; box-shadow: var(--shadow); }
+.card.tight { padding: 12px 14px; }
+.row { display: flex; align-items: center; gap: 10px; }
+.row.wrap { flex-wrap: wrap; }
+.row.between { justify-content: space-between; }
+.grow { flex: 1; min-width: 0; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.btn { appearance: none; border: 1px solid var(--line); background: var(--surface); color: var(--text); border-radius: 12px; padding: 12px 16px; font: inherit; font-weight: 600; cursor: pointer; min-height: 46px; text-align: center; }
+.btn:active { transform: translateY(1px); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.ghost { background: transparent; }
+.btn.small { min-height: 38px; padding: 8px 12px; font-size: .9rem; }
+.btn.block { display: block; width: 100%; }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+.chip { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: .76rem; font-weight: 700; background: var(--accent-soft); color: var(--accent); letter-spacing: .2px; }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.bad { background: var(--bad-soft); color: var(--bad); }
+.chip.plain { background: transparent; border: 1px solid var(--line); color: var(--muted); }
+.bar { height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+.bar.ok > i { background: var(--ok); }
+.opts { display: grid; gap: 8px; margin-top: 12px; }
+.opt { appearance: none; text-align: left; border: 2px solid var(--line); background: var(--surface); color: var(--text); border-radius: 12px; padding: 12px 14px; font: inherit; cursor: pointer; display: flex; gap: 10px; align-items: flex-start; min-height: 48px; }
+.opt b { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-size: .78rem; margin-top: 1px; }
+.opt.sel { border-color: var(--accent); background: var(--accent-soft); }
+.opt.correct { border-color: var(--ok); background: var(--ok-soft); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt[disabled] { cursor: default; }
+.q { font-size: 1.12rem; font-weight: 600; margin: 8px 0 0; white-space: pre-wrap; }
+input[type=text], select, textarea { font: inherit; color: var(--text); background: var(--surface); border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px; width: 100%; }
+input[type=text]:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+select { padding: 10px 12px; width: auto; max-width: 100%; }
+textarea.editor { min-height: 260px; line-height: 1.55; resize: vertical; }
+.fb { margin-top: 12px; padding: 12px 14px; border-radius: 12px; font-size: .96rem; }
+.fb.ok { background: var(--ok-soft); color: var(--text); border: 1px solid var(--ok); }
+.fb.bad { background: var(--bad-soft); color: var(--text); border: 1px solid var(--bad); }
+.fb b { display: block; margin-bottom: 2px; }
+.nav { position: fixed; left: 0; right: 0; bottom: 0; display: flex; background: var(--surface); border-top: 1px solid var(--line); padding: 6px max(4px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(4px, env(safe-area-inset-left, 0px)); z-index: 5; }
+.nav button { flex: 1; appearance: none; border: 0; background: transparent; color: var(--muted); font: inherit; font-size: .7rem; font-weight: 600; padding: 4px 0; cursor: pointer; display: grid; gap: 1px; justify-items: center; }
+.nav button span { font-size: 1.35rem; line-height: 1.2; }
+.nav button.on { color: var(--accent); }
+.passport { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
+.stampbox { border: 2px dashed var(--line); border-radius: 12px; padding: 8px 4px 6px; text-align: center; font-size: .7rem; font-weight: 700; color: var(--muted); min-height: 86px; display: grid; align-content: space-between; justify-items: center; gap: 4px; }
+.stampbox .ic { font-size: 1.4rem; }
+.stampbox.done { border-style: solid; border-color: var(--stamp); color: var(--stamp); transform: rotate(-3deg); background: color-mix(in srgb, var(--stamp) 8%, transparent); }
+.stampbox .bar { width: 100%; height: 5px; }
+.stamp { display: inline-block; border: 4px double var(--stamp); color: var(--stamp); border-radius: 10px; padding: 6px 16px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; transform: rotate(-6deg); animation: pop .5s ease-out; }
+@keyframes pop { from { transform: scale(2) rotate(-14deg); opacity: 0; } to { transform: scale(1) rotate(-6deg); opacity: 1; } }
+.score { font-size: 2.6rem; font-weight: 800; line-height: 1; }
+.todo { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.todo:last-child { border-bottom: 0; }
+.todo input { width: 22px; height: 22px; margin-top: 2px; accent-color: var(--accent); flex: none; }
+.todo.done span { text-decoration: line-through; color: var(--muted); }
+.list > button { width: 100%; text-align: left; }
+.item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); background: var(--surface); border-radius: 14px; margin-bottom: 8px; cursor: pointer; font: inherit; color: inherit; width: 100%; text-align: left; }
+.item .grow b { display: block; }
+.passage { white-space: pre-wrap; background: var(--accent-soft); border-radius: 12px; padding: 14px; margin: 8px 0 12px; font-size: 1.02rem; line-height: 1.6; }
+.passage .gapn { display: inline-block; min-width: 1.6em; text-align: center; background: var(--surface); border: 1px solid var(--accent); color: var(--accent); border-radius: 6px; font-weight: 800; font-size: .8rem; padding: 0 5px; }
+.sentlist { margin: 6px 0 12px; padding: 0; list-style: none; display: grid; gap: 6px; }
+.sentlist li { display: flex; gap: 8px; }
+.sentlist b { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-size: .78rem; }
+.stats { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; min-width: 88px; }
+.stat b { display: block; font-size: 1.2rem; line-height: 1.2; }
+.stat span { font-size: .74rem; color: var(--muted); }
+.stat.ok { border-color: var(--ok); } .stat.bad { border-color: var(--bad); }
+.issue { display: flex; gap: 8px; padding: 8px 10px; border-radius: 10px; background: var(--bad-soft); margin: 6px 0; font-size: .92rem; }
+.issue.tip { background: var(--warn-soft); }
+.issue code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .88rem; background: rgba(127, 127, 127, .18); padding: 0 4px; border-radius: 4px; }
+.phr { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0; }
+.phr button { border: 1px solid var(--line); background: var(--surface); color: var(--text); border-radius: 999px; padding: 6px 11px; font: inherit; font-size: .84rem; cursor: pointer; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+.tabs button { border: 1px solid var(--line); background: var(--surface); color: var(--text); border-radius: 999px; padding: 6px 12px; font: inherit; font-size: .86rem; font-weight: 600; cursor: pointer; }
+.tabs button.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.big-timer { font-size: 3rem; font-weight: 800; text-align: center; font-variant-numeric: tabular-nums; }
+.big-timer.low { color: var(--bad); }
+.scene { font-size: 3rem; text-align: center; letter-spacing: 6px; padding: 8px 0; }
+.flash { min-height: 190px; display: grid; place-items: center; text-align: center; cursor: pointer; padding: 22px; }
+.flash .front { font-size: 1.7rem; font-weight: 700; }
+.flash .ex { color: var(--muted); font-style: italic; margin-top: 8px; }
+.flash .hint { color: var(--muted); font-size: .85rem; }
+details { border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; background: var(--surface); }
+details summary { cursor: pointer; font-weight: 700; }
+details[open] summary { margin-bottom: 6px; }
+details ul, details ol { margin: 4px 0 4px 18px; padding: 0; }
+audio { width: 100%; margin-top: 8px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.hide { display: none !important; }
+.transcript { white-space: pre-wrap; font-size: .95rem; background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; margin-top: 10px; }
+.match-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
+.match-row label { flex: none; width: 88px; font-weight: 600; }
+.match-row select { flex: 1; }
+@media (min-width: 640px) { .app { padding-top: 28px; } .passport { gap: 12px; } }
+
+</style>
+</head>
+<body>
+<main id="main" class="app"><noscript>Esta app necesita JavaScript.</noscript></main>
+<nav class="nav" aria-label="Secciones">
+  <button data-tab="home"><span aria-hidden="true">🏠</span>Hoy</button>
+  <button data-tab="quiz"><span aria-hidden="true">📝</span>Quiz</button>
+  <button data-tab="listen"><span aria-hidden="true">🎧</span>Listening</button>
+  <button data-tab="write"><span aria-hidden="true">✍️</span>Writing</button>
+  <button data-tab="speak"><span aria-hidden="true">🎤</span>Speaking</button>
+  <button data-tab="cards"><span aria-hidden="true">🃏</span>Cartas</button>
+</nav>
+<script>
+(function () {
+'use strict';
+/* ===== Banco de preguntas (Use of English / Reading). Preguntas originales, no son del examen. ===== */
+const TOPICS = {
+  tiempos: 'Tiempos verbales',
+  condicionales: 'Condicionales',
+  prep: 'Preposiciones',
+  phrasal: 'Phrasal verbs',
+  colocaciones: 'Colocaciones',
+  conectores: 'Conectores',
+  patrones: 'Verb patterns (-ing / to)',
+  relativos: 'Relativos y pasiva',
+  falsos: 'Falsos amigos',
+  errores: 'Errores típicos',
+  vocab: 'Vocabulario'
+};
+const QUIZ = [];
+let _qn = 0;
+const mc = (topic, level, q, opts, ans, why) => QUIZ.push({ id: 'q' + (++_qn), type: 'mc', topic, level, q, opts, ans, why });
+const gp = (topic, level, q, answers, why) => QUIZ.push({ id: 'q' + (++_qn), type: 'gap', topic, level, q, answers, why });
+const WHICH = 'Which sentence is correct?';
+
+/* --- Tiempos verbales --- */
+mc('tiempos', 'B1', 'I ____ in Madrid since 2019.', ['live', 'have lived', 'am living', 'lived'], 1, 'Con *since* + momento de inicio se usa present perfect: *have lived*.');
+mc('tiempos', 'B1', 'When we arrived, the film ____.', ['had already started', 'already starts', 'was already start', 'has already started'], 0, 'Acción anterior a otra acción pasada: past perfect (*had started*).');
+mc('tiempos', 'B1', 'Look at those black clouds! It ____ rain.', ['is going to', 'rains', 'rained', 'has rained'], 0, 'Hay evidencia en el presente, así que se usa *going to*.');
+mc('tiempos', 'B1', 'She ____ TV when the phone rang.', ['watched', 'was watching', 'has watched', 'is watching'], 1, 'Acción en curso interrumpida por otra: past continuous.');
+gp('tiempos', 'B1', "I haven't seen Tom ____ last Monday.", ['since'], '*Since* + momento de inicio. Con una duración se usa *for*.');
+gp('tiempos', 'B1', 'We have known each other ____ ten years.', ['for'], '*For* + duración. Con un momento concreto se usa *since*.');
+mc('tiempos', 'B2', 'By the time we reached the station, the train ____.', ['left', 'had left', 'has left', 'was leaving'], 1, 'Acción anterior a otro momento pasado: past perfect (*had left*).');
+mc('tiempos', 'B1', 'Have you ever ____ sushi?', ['ate', 'eaten', 'eat', 'eating'], 1, 'Present perfect: *have* + participio (*eaten*).');
+mc('tiempos', 'B2', 'Yesterday she said she ____ very tired.', ['is', 'was', 'has been', 'will be'], 1, 'Estilo indirecto: el verbo retrocede un tiempo (*is* pasa a *was*).');
+mc('tiempos', 'A2', 'At the moment, my brother ____ a shower.', ['has', 'is having', 'have', 'having'], 1, 'Acción en curso ahora: present continuous (*is having*).');
+mc('tiempos', 'A2', 'I ____ to the gym every Monday and Thursday.', ['go', 'am going', 'have gone', 'went'], 0, 'Rutina habitual: present simple.');
+mc('tiempos', 'B2', "I'm exhausted. I ____ since six o'clock this morning.", ['work', 'am working', 'have been working', 'worked'], 2, 'Acción que empezó en el pasado y sigue, con *since*: present perfect continuous.');
+
+/* --- Condicionales --- */
+mc('condicionales', 'B1', "If it ____ tomorrow, we'll stay at home.", ['will rain', 'rains', 'rained', 'would rain'], 1, 'Primer condicional: *if* + presente, *will* + infinitivo. Tras *if* no se usa *will*.');
+mc('condicionales', 'B2', 'If I had more money, I ____ a bigger flat.', ['will rent', 'would rent', 'rented', 'would have rented'], 1, 'Segundo condicional: *if* + pasado, *would* + infinitivo.');
+mc('condicionales', 'B2', 'If she had studied harder, she ____ the exam.', ['would pass', 'would have passed', 'will pass', 'passed'], 1, 'Tercer condicional (pasado irreal): *if* + past perfect, *would have* + participio.');
+mc('condicionales', 'B2', 'I wish I ____ more free time.', ['have', 'had', 'would have', 'will have'], 1, '*Wish* + pasado para deseos sobre el presente.');
+mc('condicionales', 'B2', '____ you leave now, you will miss the bus.', ['If', 'Unless', 'When', 'Although'], 1, '*Unless* = *if not* (a menos que). Se usa con presente.');
+gp('condicionales', 'B2', 'If I ____ (know) about the party, I would have gone.', ['had known'], 'Tercer condicional: *if* + past perfect (*had known*).');
+mc('condicionales', 'B1', 'What would you do if you ____ the lottery?', ['win', 'won', 'will win', 'would win'], 1, 'Segundo condicional: *if* + pasado simple.');
+mc('condicionales', 'C1', '____ I known the truth, I would have said something.', ['If', 'Had', 'Were', 'Should'], 1, 'Inversión del tercer condicional: *Had I known* = *If I had known*.');
+mc('condicionales', 'C1', 'If I ____ that job last year, I would be earning more now.', ['took', 'had taken', 'would take', 'have taken'], 1, 'Condicional mixto: *if* + past perfect (pasado) y *would* + infinitivo (presente).');
+
+/* --- Preposiciones --- */
+gp('prep', 'B1', "I'm looking forward ____ meeting you.", ['to'], '*Look forward to* + -ing. Aquí *to* es preposición.');
+gp('prep', 'B1', 'It depends ____ the weather.', ['on'], '*Depend on*, no *of*.');
+gp('prep', 'B1', "She's very good ____ languages.", ['at'], '*Good at* + sustantivo o -ing.');
+gp('prep', 'B1', 'We arrived ____ the airport at six.', ['at'], '*Arrive at* un lugar concreto; *arrive in* una ciudad o un país.');
+gp('prep', 'B1', "He's married ____ a doctor.", ['to'], '*Married to*, no *with*.');
+gp('prep', 'A2', "I'll see you ____ Monday.", ['on'], '*On* + días.');
+gp('prep', 'B1', "She's interested ____ photography.", ['in'], '*Interested in*.');
+gp('prep', 'B1', "I'm afraid ____ spiders.", ['of'], '*Afraid of*.');
+gp('prep', 'B1', 'Thanks for waiting ____ me.', ['for'], '*Wait for*.');
+gp('prep', 'B2', "He's responsible ____ the project.", ['for'], '*Responsible for*.');
+gp('prep', 'B1', "She's very proud ____ her daughter.", ['of'], '*Proud of*.');
+gp('prep', 'A2', 'The meeting starts ____ 9 a.m.', ['at'], '*At* + horas.');
+gp('prep', 'A2', 'I was born ____ 1998.', ['in'], '*In* + años, meses y estaciones.');
+
+/* --- Phrasal verbs --- */
+gp('phrasal', 'B1', "Don't give ____! You can do it.", ['up'], '*Give up* = rendirse.');
+gp('phrasal', 'B1', 'We ran ____ milk, so I went to the shop.', ['out of'], '*Run out of* = quedarse sin.');
+gp('phrasal', 'B1', 'She wants to take ____ yoga this autumn.', ['up'], '*Take up* = empezar una afición.');
+gp('phrasal', 'B1', "Can you look ____ my cat while I'm away?", ['after'], '*Look after* = cuidar.');
+gp('phrasal', 'B1', 'The meeting was put ____ until next week.', ['off'], '*Put off* = aplazar.');
+gp('phrasal', 'B2', 'He came ____ with a brilliant idea.', ['up'], '*Come up with* = idear. El hueco es *up*; *with* ya está escrito.');
+gp('phrasal', 'B2', "It's hard to get ____ with my neighbours: we never agree.", ['on', 'along'], '*Get on / get along with* = llevarse bien con.');
+mc('phrasal', 'B2', '"It turned out that he was right." What does *turned out* mean?', ['he turned around', 'it finally proved to be the case', 'he went outside', 'he got angry'], 1, '*Turn out* = resultar, acabar siendo.');
+gp('phrasal', 'B2', 'The concert was called ____ because of the storm.', ['off'], '*Call off* = cancelar.');
+gp('phrasal', 'B2', 'I need to fill ____ this form before Friday.', ['in', 'out'], '*Fill in / fill out* = rellenar un formulario.');
+gp('phrasal', 'B2', 'She is slowly getting ____ a bad cold.', ['over'], '*Get over* = recuperarse de.');
+
+/* --- Colocaciones --- */
+mc('colocaciones', 'B1', 'I need to ____ a decision soon.', ['do', 'make', 'take', 'have'], 1, '*Make a decision*. Igual que *make a mistake* o *make an effort*.');
+mc('colocaciones', 'B1', 'She always ____ her best in exams.', ['makes', 'does', 'takes', 'keeps'], 1, '*Do your best*.');
+mc('colocaciones', 'B1', 'Please ____ attention to the instructions.', ['make', 'pay', 'put', 'do'], 1, '*Pay attention*.');
+mc('colocaciones', 'B1', "Let's ____ in touch after the course.", ['keep', 'hold', 'make', 'put'], 0, '*Keep in touch* = mantener el contacto.');
+mc('colocaciones', 'B2', 'He ____ a big risk when he invested all his savings.', ['did', 'made', 'took', 'had'], 2, '*Take a risk*.');
+mc('colocaciones', 'B1', "I'd like to ____ a complaint about the service.", ['do', 'make', 'tell', 'say'], 1, '*Make a complaint*.');
+mc('colocaciones', 'B2', 'The team must ____ the deadline.', ['meet', 'catch', 'touch', 'arrive'], 0, '*Meet a deadline* = cumplir un plazo.');
+mc('colocaciones', 'B2', 'After a long discussion, they finally ____ a conclusion.', ['arrived', 'reached', 'made', 'took'], 1, '*Reach a conclusion*. (*Arrive* necesitaría *at*.)');
+mc('colocaciones', 'B1', 'I caught a bad ____ last week and stayed in bed.', ['cold', 'illness', 'health', 'hospital'], 0, '*Catch a cold*.');
+mc('colocaciones', 'B2', 'She has ____ great progress since September.', ['done', 'made', 'taken', 'got'], 1, '*Make progress*.');
+mc('colocaciones', 'B2', 'He ____ a promise and told everyone the secret.', ['broke', 'cracked', 'failed', 'lost'], 0, '*Break a promise*.');
+
+/* --- Conectores --- */
+mc('conectores', 'B1', '____ it was raining, we went for a walk.', ['Although', 'Despite', 'However', 'Because'], 0, '*Although* + sujeto + verbo. *Despite* va con sustantivo o -ing.');
+mc('conectores', 'B1', '____ the rain, we went for a walk.', ['Although', 'Despite', 'However', 'Because'], 1, '*Despite* + sustantivo (*the rain*).');
+mc('conectores', 'B1', 'I was very tired. ____, I finished the report.', ['Because', 'Although', 'However', 'Despite'], 2, '*However* abre una frase nueva con contraste.');
+mc('conectores', 'B2', 'The trains were cancelled; ____, we took a taxi.', ['although', 'despite', 'therefore', 'however'], 2, '*Therefore* = por lo tanto (resultado).');
+mc('conectores', 'B2', 'She loves sport, ____ her brother prefers reading.', ['whereas', 'because', 'unless', 'despite'], 0, '*Whereas* = mientras que (contraste entre dos cosas).');
+mc('conectores', 'B1', "I'll call you ____ I arrive.", ['unless', 'although', 'as soon as', 'despite'], 2, '*As soon as* = en cuanto.');
+mc('conectores', 'B1', "You can't enter ____ you have a ticket.", ['unless', 'because', 'despite', 'whereas'], 0, '*Unless* = a menos que.');
+mc('conectores', 'B1', 'He stayed at home ____ he was ill.', ['although', 'because', 'despite', 'however'], 1, '*Because* introduce la causa.');
+mc('conectores', 'B2', 'The hotel was cheap. ____, it was clean and comfortable.', ['Moreover', 'Although', 'Unless', 'Despite'], 0, '*Moreover* = además (añade una idea).');
+mc('conectores', 'B2', '____ his lack of experience, he got the job.', ['Despite', 'Although', 'Whereas', 'Unless'], 0, '*Despite* + sustantivo (*his lack of experience*).');
+
+/* --- Verb patterns --- */
+gp('patrones', 'B2', 'She succeeded ____ finding a job in Dublin.', ['in'], '*Succeed in* + -ing.');
+gp('patrones', 'B1', 'Tim managed ____ finish the ride.', ['to'], '*Manage to* + infinitivo.');
+mc('patrones', 'B1', 'I enjoy ____ in the sea.', ['swim', 'to swim', 'swimming', 'swam'], 2, '*Enjoy* + -ing.');
+mc('patrones', 'B1', 'He suggested ____ to the cinema.', ['go', 'to go', 'going', 'went'], 2, '*Suggest* + -ing.');
+mc('patrones', 'B2', 'I forgot ____ the door, so anyone could come in.', ['to lock', 'locking', 'lock', 'locked'], 0, '*Forget to do* = olvidar hacer algo.');
+mc('patrones', 'B1', 'I look forward to ____ you next week.', ['see', 'seeing', 'to see', 'saw'], 1, '*Look forward to* + -ing (aquí *to* es una preposición).');
+mc('patrones', 'B1', 'She decided ____ the job.', ['to take', 'taking', 'take', 'took'], 0, '*Decide* + *to* + infinitivo.');
+mc('patrones', 'B2', 'I clearly remember ____ the door, so someone else must have opened it.', ['to lock', 'locking', 'lock', 'locked'], 1, '*Remember doing* = recordar haber hecho algo.');
+mc('patrones', 'B2', 'He refused ____ me the answer.', ['to give', 'giving', 'give', 'gave'], 0, '*Refuse* + *to* + infinitivo.');
+
+/* --- Relativos y pasiva --- */
+mc('relativos', 'B1', 'The woman ____ lives next door is a doctor.', ['who', 'which', 'whose', 'where'], 0, '*Who* para personas.');
+mc('relativos', 'B1', 'This is the village ____ I was born.', ['who', 'which', 'where', 'whose'], 2, '*Where* para lugares.');
+mc('relativos', 'B2', 'The man ____ car was stolen called the police.', ['who', 'which', 'whose', 'where'], 2, '*Whose* indica posesión.');
+mc('relativos', 'B1', 'English ____ in many countries.', ['speaks', 'is spoken', 'is speaking', 'spoke'], 1, 'Pasiva en presente: *is spoken*.');
+mc('relativos', 'B2', 'The report ____ by the manager yesterday.', ['wrote', 'was written', 'is written', 'has written'], 1, 'Pasiva en pasado: *was written*.');
+mc('relativos', 'B2', 'My bike ____ last night.', ['stole', 'was stolen', 'has stolen', 'is stolen'], 1, 'Pasiva en pasado: *was stolen*.');
+mc('relativos', 'B2', 'The windows ____ every week.', ['clean', 'are cleaned', 'cleaned', 'are cleaning'], 1, 'Pasiva en presente: *are cleaned*.');
+mc('relativos', 'B2', 'The book ____ I bought yesterday is excellent.', ['who', 'which', 'where', 'whose'], 1, '*Which* para cosas.');
+mc('relativos', 'C1', "The new law, ____ was passed last month, affects everyone.", ['that', 'which', 'what', 'who'], 1, 'Oración de relativo entre comas: *which* (con *that* no se usan comas).');
+
+/* --- Falsos amigos --- */
+mc('falsos', 'B1', '"Actually, I don\'t like coffee." ¿Qué significa *actually*?', ['actualmente', 'de hecho', 'antiguamente', 'rápidamente'], 1, '*Actually* = de hecho. "Actualmente" es *currently*.');
+mc('falsos', 'B1', "I'm going to the ____ to borrow a book.", ['library', 'bookshop', 'stationery', 'school'], 0, '*Library* = biblioteca. Librería = *bookshop*.');
+mc('falsos', 'B2', 'She felt very ____ when she fell in front of everyone.', ['embarrassed', 'pregnant', 'sensitive', 'sensible'], 0, '*Embarrassed* = avergonzada. Embarazada = *pregnant*.');
+mc('falsos', 'B2', 'He ____ to be ill, but he was fine.', ['intended', 'pretended', 'expected', 'attended'], 1, '*Pretend* = fingir. Pretender = *intend*.');
+mc('falsos', 'B2', "He cries at sad films; he's very ____.", ['sensible', 'sensitive', 'sensational', 'senseless'], 1, '*Sensitive* = sensible (emocionalmente). *Sensible* = sensato.');
+mc('falsos', 'B2', 'After a long wait, the bus ____ arrived.', ['actually', 'currently', 'eventually', 'possibly'], 2, '*Eventually* = finalmente.');
+mc('falsos', 'B2', "I'm ____ studying for my exam, so I can't talk.", ['actually', 'currently', 'eventually', 'finally'], 1, '*Currently* = actualmente, ahora mismo.');
+mc('falsos', 'B2', 'I need to ____ the meeting on Friday.', ['assist', 'attend', 'pretend', 'intend'], 1, '*Attend* = asistir a. *Assist* = ayudar.');
+mc('falsos', 'B2', "I didn't ____ I had lost my keys until I got home.", ['realize', 'carry out', 'achieve', 'happen'], 0, '*Realize* = darse cuenta. Realizar = *carry out*.');
+
+/* --- Errores típicos de hispanohablantes --- */
+mc('errores', 'A2', WHICH, ['I have 25 years.', 'I am 25 years old.', 'I have 25 years old.', 'I am having 25 years.'], 1, 'La edad va con *to be*: *I am 25 (years old)*.');
+mc('errores', 'B1', WHICH, ['People is friendly here.', 'People are friendly here.', 'People are friendlies here.', 'The people is friendly here.'], 1, '*People* es plural: *are*.');
+mc('errores', 'B1', WHICH, ["She don't like coffee.", "She doesn't likes coffee.", "She doesn't like coffee.", 'She not like coffee.'], 2, 'Con *he/she/it*: *doesn\'t* + verbo sin -s.');
+mc('errores', 'B1', WHICH, ['I am agree with you.', 'I agree with you.', 'I am agreeing to you.', 'I agree you.'], 1, '*Agree* es un verbo: no lleva *to be*.');
+mc('errores', 'B1', WHICH, ['It depends of the price.', 'It depends from the price.', 'It depends on the price.', 'It depends in the price.'], 2, '*Depend on*.');
+mc('errores', 'B1', WHICH, ['I made my homework.', 'I did my homework.', 'I did my homeworks.', 'I make my homework.'], 1, '*Do homework*. *Homework* no tiene plural.');
+mc('errores', 'B1', WHICH, ['I live here since 2018.', 'I have lived here since 2018.', 'I am living here since 2018.', 'I lived here since 2018.'], 1, 'Con *since* se usa present perfect.');
+mc('errores', 'A2', WHICH, ['Is raining.', 'It raining.', "It's raining.", 'Raining is.'], 2, 'El inglés necesita sujeto: *It\'s raining*.');
+mc('errores', 'B1', WHICH, ['Can you explain me the problem?', 'Can you explain the problem to me?', 'Can you explain for me the problem?', 'Can you explain me about the problem?'], 1, '*Explain something to somebody*.');
+mc('errores', 'B1', WHICH, ['The information are useful.', 'The informations are useful.', 'The information is useful.', 'The information it is useful.'], 2, '*Information* no se cuenta: singular, *is*.');
+mc('errores', 'A2', WHICH, ['She is more tall than me.', 'She is taller than me.', 'She is more taller than me.', 'She is tall than me.'], 1, 'Adjetivo corto + *-er than*.');
+mc('errores', 'B1', WHICH, ['I like very much this film.', 'I like this film very much.', 'I very like this film.', 'I like this film very.'], 1, '*Very much* va después del objeto.');
+mc('errores', 'A2', WHICH, ['I went to home.', 'I went home.', 'I went at home.', 'I went in home.'], 1, '*Go home* sin preposición.');
+mc('errores', 'B1', WHICH, ['Me and my friend went to the cinema.', 'My friend and me went to the cinema.', 'My friend and I went to the cinema.', 'I and my friend went to the cinema.'], 2, 'Como sujeto: *My friend and I*.');
+mc('errores', 'B1', WHICH, ['You should to study more.', 'You should study more.', 'You should studying more.', 'You should studies more.'], 1, 'Los modales (*should, can, must*) no llevan *to*.');
+mc('errores', 'B1', WHICH, ['I am interested on music.', 'I am interested in music.', 'I am interesting in music.', 'I am interested of music.'], 1, '*Interested in*. *Interesting* describe lo que provoca interés.');
+mc('errores', 'B1', WHICH, ['The life is hard.', 'Life is hard.', 'A life is hard.', 'Lives is hard.'], 1, 'Sin artículo cuando se habla en general.');
+mc('errores', 'B2', WHICH, ['We discussed about the problem.', 'We discussed the problem.', 'We discussed of the problem.', 'We discussed on the problem.'], 1, '*Discuss* no lleva preposición.');
+mc('errores', 'B2', WHICH, ['He is married with a teacher.', 'He is married to a teacher.', 'He is married at a teacher.', 'He is married for a teacher.'], 1, '*Married to*.');
+mc('errores', 'B2', WHICH, ['The film was very boring and I was bored.', 'The film was very bored and I was boring.', 'The film was very boring and I was boring.', 'The film was very bored and I was bored.'], 0, '*-ing* describe la cosa (*boring*); *-ed* describe cómo te sientes (*bored*).');
+
+/* --- Vocabulario --- */
+mc('vocab', 'B1', 'We need to ____ with this problem quickly.', ['deal', 'solve', 'do', 'fix'], 0, '*Deal with* = ocuparse de.');
+mc('vocab', 'B1', 'She has a great ____ for languages.', ['talent', 'habit', 'hobby', 'fashion'], 0, '*A talent for* = talento para.');
+mc('vocab', 'B1', 'The film was so ____ that I fell asleep.', ['boring', 'bored', 'bore', 'bores'], 0, 'Describe la película: *boring*.');
+mc('vocab', 'B1', 'She is very ____ about her exam results.', ['worried', 'worrying', 'worry', 'worries'], 0, '*Worried about* = preocupada por.');
+mc('vocab', 'B1', 'We stayed at a small hotel ____ the beach.', ['near', 'between', 'during', 'since'], 0, '*Near* = cerca de.');
+mc('vocab', 'B2', 'She ____ to finish the report before the deadline.', ['managed', 'succeeded', 'achieved', 'reached'], 0, '*Manage to* + infinitivo.');
+mc('vocab', 'B2', 'The company is going to ____ fifty new employees.', ['hire', 'rent', 'lend', 'borrow'], 0, '*Hire* = contratar.');
+mc('vocab', 'B2', 'His speech was very ____; everyone listened carefully.', ['convincing', 'convinced', 'convince', 'convinces'], 0, '*Convincing* = convincente.');
+mc('vocab', 'C1', "The company's profits ____ by 15% last year.", ['raised', 'rose', 'arose', 'lifted'], 1, '*Rise* (sin complemento) = aumentar. *Raise* necesita complemento.');
+mc('vocab', 'C1', 'There has been a ____ increase in house prices.', ['sharp', 'sharpen', 'sharply', 'sharpness'], 0, '*Sharp increase*: adjetivo + sustantivo.');
+
+/* ===== Textos de lectura (originales) ===== */
+const PASSAGES = [
+  {
+    id: 'p1', title: 'Aviso de la comunidad', level: 'B1', type: 'mc',
+    tip: 'Pregunta 1 = objetivo del texto. Mira el verbo principal: ¿informa, pide, se queja?',
+    text: [
+      'To all residents',
+      'Last Saturday, some of you may have noticed that the lift was out of order. The problem was caused by a power cut, which also affected the lights in the car park. The building manager has now checked everything, and the lift is working again.',
+      'However, because of repairs to the roof, the entrance on the north side will be closed from Monday to Thursday next week, so please use the main door. We are sorry for any trouble.',
+      'If you find any further problems, do not call the manager directly. Instead, leave a note in the box by the post room before noon, and we will deal with it the next day.',
+      'The Residents\' Committee'
+    ],
+    qs: [
+      { q: 'What is the main purpose of the message?', opts: ['to complain about the building manager', 'to give residents information about recent and planned problems', 'to ask residents to help with repairs', 'to announce a residents\' meeting'], ans: 1, why: 'Informa de un problema pasado (ascensor) y de uno futuro (entrada cerrada). No se queja, no pide ayuda y no convoca ninguna reunión.' },
+      { q: 'What caused the problem with the lift?', opts: ['work on the roof', 'a power cut', 'a broken door', 'a shortage of staff'], ans: 1, why: '*The problem was caused by a power cut*. Las obras del tejado afectan a la entrada, no al ascensor.' },
+      { q: 'What should residents do next week?', opts: ['use the north entrance', 'avoid the car park', 'use the main door', 'call the manager'], ans: 2, why: '*The entrance on the north side will be closed… please use the main door*.' },
+      { q: 'How should residents report a new problem?', opts: ['by phoning the manager', 'by emailing the committee', 'by leaving a note before noon', 'by visiting the post room after lunch'], ans: 2, why: '*Do not call the manager directly. Instead, leave a note… before noon*.' }
+    ]
+  },
+  {
+    id: 'p2', title: 'Por qué recordamos las canciones', level: 'B2', type: 'mc',
+    tip: 'Cada pregunta sigue el orden del texto. Busca la frase exacta y descarta las opciones que cambian el sentido.',
+    text: [
+      'Most of us can sing along to a song we have not heard for years, yet we struggle to remember what we read in a book last month. Researchers believe this is because music gives the brain a structure to hold on to. Rhythm and rhyme break information into small, predictable pieces, and the melody acts like a path that leads us from one line to the next.',
+      'That is why many teachers use songs to help young children learn the alphabet or the days of the week. However, the effect is not limited to children. In one study, adults who learned a short text set to music remembered far more of it a week later than those who simply read it aloud.',
+      'The scientists do not suggest that we should sing our way through every exam, but they do think that a little rhythm can make studying more effective.'
+    ],
+    qs: [
+      { q: 'What does the writer say about songs?', opts: ['They are easier to remember than most written texts.', 'They are only useful for children.', 'They are harder to learn than poems.', 'They need to be heard often to be remembered.'], ans: 0, why: 'Podemos cantar una canción que no oímos hace años, pero nos cuesta recordar lo leído. D es lo contrario.' },
+      { q: 'According to the text, what does the melody help us do?', opts: ['choose which song to sing', 'move from one line to the next', 'hear the rhyme more clearly', 'learn new words faster'], ans: 1, why: '*The melody acts like a path that leads us from one line to the next*.' },
+      { q: 'What did the study show?', opts: ['Adults prefer reading aloud.', 'Adults remembered more when the text had music.', 'Children learn faster than adults.', 'Reading aloud is useless.'], ans: 1, why: 'Los adultos que aprendieron el texto con música recordaron *far more* una semana después. Leer en voz alta no es "inútil", solo menos eficaz.' },
+      { q: 'What do the scientists suggest at the end?', opts: ['Students should sing in exams.', 'A little rhythm could improve studying.', 'Teachers should stop using songs.', 'Music is bad for memory.'], ans: 1, why: '*They do think that a little rhythm can make studying more effective*. Y dicen expresamente que NO hay que cantar en los exámenes.' }
+    ]
+  },
+  {
+    id: 'p3', title: 'Cómo dejar de procrastinar', level: 'B2–C1', type: 'gapped',
+    tip: 'Mira las palabras que enlazan: *This, That is why, Once you…, People who…*. Sobran 2 frases.',
+    text: [
+      'We all put things off from time to time. Psychologists say that this is not usually about laziness; rather, it is about managing uncomfortable feelings. When a task seems boring or difficult, we choose something more pleasant instead. {1} Unfortunately, the relief does not last long, and the task is still waiting for us.',
+      'One way to break the habit is to make the first step very small. {2} Once you have started, it is much easier to carry on.',
+      'It also helps to remove distractions. Researchers found that people who left their phones in another room finished tasks faster than those who kept them on the desk. {3} That is why, before you start work, it is best to put your phone somewhere you cannot see it.',
+      'Finally, do not be too hard on yourself. {4} People who forgive themselves for putting things off are less likely to do it again next time.'
+    ],
+    sentences: {
+      A: "For example, instead of 'writing the report', you might simply open the document and type the title.",
+      B: 'The reason is that even a silent phone can pull our attention away.',
+      C: 'This gives us a feeling of relief straight away.',
+      D: 'Studies suggest that guilt actually makes the problem worse.',
+      E: 'Most people are surprised to learn how many hours they spend online each day.',
+      F: 'A few years ago, many companies introduced longer working hours.'
+    },
+    gaps: [
+      { n: 1, ans: 'C', why: '*This* = elegir algo más agradable. Y la frase siguiente habla de *the relief* (alivio): C lo introduce.' },
+      { n: 2, ans: 'A', why: 'Tras "dar un primer paso muy pequeño", A da un ejemplo; después, *Once you have started* continúa con empezar.' },
+      { n: 3, ans: 'B', why: 'Explica la razón del experimento del móvil. Después, *That is why…* solo enlaza con una razón.' },
+      { n: 4, ans: 'D', why: 'Tras "no seas duro contigo", D explica por qué (la culpa empeora el problema); luego, quienes se perdonan repiten menos.' }
+    ]
+  }
+];
+
+/* ===== Listening (guiones originales; la app los lee con la voz del dispositivo) ===== */
+const LISTENING = [
+  {
+    id: 'l1', title: '¿Cómo van al centro?', level: 'A2', kind: 'dialogue', speakers: ['F', 'M'],
+    lines: [
+      { s: 1, t: 'Shall we go into town by bus, or shall we take your car?' },
+      { s: 0, t: "The car's at the garage until Friday, I'm afraid." },
+      { s: 1, t: 'Okay. The train is quicker than the bus, but the station is a long walk from here.' },
+      { s: 0, t: "True. Let's just take the bus. It stops right outside my flat." }
+    ],
+    qs: [
+      { type: 'mc', q: 'How will they go to town?', opts: ['by car', 'by train', 'by bus'], ans: 2, why: 'El coche está en el taller; el tren queda lejos; el autobús para en la puerta. Se descartan dos y se elige el tercero.' }
+    ]
+  },
+  {
+    id: 'l2', title: 'El restaurante italiano', level: 'B1', kind: 'dialogue', speakers: ['F', 'M'],
+    lines: [
+      { s: 0, t: 'So, what did you think of the new Italian place?' },
+      { s: 1, t: 'The pasta was fantastic, but I thought it was a bit expensive.' },
+      { s: 0, t: "I agree about the food. Best I've had in ages. And the waiters were lovely, though I didn't think the prices were too bad." },
+      { s: 1, t: 'Maybe. Anyway, we should go again.' }
+    ],
+    qs: [
+      { type: 'mc', q: 'What did they both like about the restaurant?', opts: ['the prices', 'the food', 'the service'], ans: 1, why: 'Pregunta con *both*: los dos alaban la comida. Los precios solo le parecen bien a ella; el servicio solo lo menciona ella.' }
+    ]
+  },
+  {
+    id: 'l3', title: 'Daniel y su panadería', level: 'B2', kind: 'monologue', speakers: ['M'],
+    lines: [
+      { s: 0, t: "Honestly, when I opened the bakery five years ago, I thought it would fail within a year. I'd always wanted to be a chef, but my parents persuaded me to study accountancy first, which I'm now quite glad about, because I understand the business side. I chose this street because it's quiet, though a friend told me that a busier area would be better. I didn't listen, and I'm pleased I didn't. Now I'm surprised by how many regular customers I have." }
+    ],
+    qs: [
+      { type: 'mc', q: 'How did Daniel feel when he opened the bakery?', opts: ['confident it would succeed', 'worried it would not last', 'excited about hiring staff'], ans: 1, why: '*I thought it would fail within a year*: temía que no durara.' },
+      { type: 'mc', q: 'Why did he study accountancy?', opts: ['His parents persuaded him.', 'He wanted to run a business.', 'He could not become a chef.'], ans: 0, why: '*I\'d always wanted to be a chef, but my parents persuaded me*.' },
+      { type: 'mc', q: 'Why did he choose that street?', opts: ['A friend recommended it.', 'It was a busy area.', 'It was quiet.'], ans: 2, why: '*I chose this street because it\'s quiet*. El amigo recomendó una zona más concurrida, y no le hizo caso.' },
+      { type: 'mc', q: 'How does he feel about his customers now?', opts: ['disappointed', 'surprised', 'annoyed'], ans: 1, why: '*I\'m surprised by how many regular customers I have*.' }
+    ]
+  },
+  {
+    id: 'l4', title: 'Acampar: dos amigos', level: 'B2', kind: 'dialogue', speakers: ['F', 'M'],
+    lines: [
+      { s: 0, t: 'Did you go camping this summer?' },
+      { s: 1, t: 'Yes, in the mountains. It was wonderful, but honestly, packing the tent and planning the food took forever.' },
+      { s: 0, t: 'I know! I used to love camping as a kid, but now it feels like a lot of work.' },
+      { s: 1, t: 'Same here. But the quiet was worth it.' }
+    ],
+    qs: [
+      { type: 'mc', q: 'What do they both say about camping nowadays?', opts: ['It takes a lot of preparation.', 'It is cheaper than staying in hotels.', 'It is better for children.'], ans: 0, why: 'Él: *packing the tent and planning the food took forever*. Ella: *it feels like a lot of work*. Los dos hablan del esfuerzo.' },
+      { type: 'mc', q: 'How does the man feel about the trip overall?', opts: ["It wasn't worth the effort.", 'It was worth it for the quiet.', 'It was too noisy.'], ans: 1, why: '*The quiet was worth it*.' }
+    ]
+  },
+  {
+    id: 'l5', title: 'Cinco hablantes: transporte público', level: 'B2–C1', kind: 'extracts', speakers: ['F', 'M', 'F', 'M', 'F'],
+    lines: [
+      { s: 0, label: 'Speaker 1', t: "I've been commuting for ten years and I can count on one hand the times my train hasn't turned up. It isn't the cheapest, and it's often crowded, but I know exactly when I'll arrive, and that's all that matters to me." },
+      { s: 1, label: 'Speaker 2', t: "I sold my car last year. I know buses aren't glamorous, but when I think of all the pollution cars create, I feel better taking the tram. If more people did it, the air in the city would be much cleaner." },
+      { s: 2, label: 'Speaker 3', t: "I work late shifts, so I'm often out after midnight. What I appreciate is that the stations are well lit and there's always staff around. I've never felt uncomfortable, even on my own." },
+      { s: 3, label: 'Speaker 4', t: "When my cousins visited from Japan, they found their way around without any help. The signs are in several languages and the map is really clear, so even people who don't speak the language can manage." },
+      { s: 4, label: 'Speaker 5', t: "Honestly, the trains are slow and a bit old, and sometimes they're late. But with the monthly pass I pay less than I used to spend on petrol in a week, so I can't complain." }
+    ],
+    qs: [
+      {
+        type: 'match', q: 'What does each speaker value most about public transport in their city?',
+        opts: ['It is cheap.', 'It is reliable.', 'The vehicles and stations are clean.', 'It is fast.', 'It is safe at night.', 'It connects the suburbs to the centre.', 'It is good for the environment.', 'It is easy for tourists to use.'],
+        ans: ['B', 'G', 'E', 'H', 'A'],
+        why: [
+          'Cuenta las veces que el tren no ha llegado (casi ninguna) y dice *I know exactly when I\'ll arrive*: fiabilidad. Admite que es caro y va lleno.',
+          'Vendió el coche por la contaminación: *the pollution cars create*. Habla de aire limpio, no de vehículos limpios.',
+          'Trabaja de noche y valora *well lit… staff around… never felt uncomfortable*.',
+          'Sus primos encontraron el camino solos: carteles en varios idiomas y mapa claro.',
+          'Dice que es lento y viejo, pero *I pay less than I used to spend on petrol*: el precio.'
+        ]
+      }
+    ]
+  },
+  {
+    id: 'l6', title: 'Carrera benéfica (rellenar huecos)', level: 'B1', kind: 'monologue', speakers: ['F'],
+    lines: [
+      { s: 0, t: 'Hello everyone, and welcome to the City Charity Run. This year we are raising money for the local hospital. The run starts at nine o\'clock in the central park, so please arrive by half past eight to collect your number. There are two routes: a short one of three kilometres for families, and a longer one of ten kilometres. Everyone who finishes will receive a free medal. Please remember to wear comfortable shoes, because some parts of the route are quite steep. Water will be available at the finish line. Finally, a big thank you to our sponsor, a local supermarket, which has paid for all the T-shirts.' }
+    ],
+    qs: [
+      { type: 'gap', q: 'The money raised is for the local ____.', answers: ['hospital'], why: '*Raising money for the local hospital*.' },
+      { type: 'gap', q: 'Runners should arrive by ____ to collect their number.', answers: ['half past eight', 'half past 8', '8.30', '8:30', 'eight thirty', '830'], why: '*Arrive by half past eight*. La carrera empieza a las nueve.' },
+      { type: 'gap', q: 'The longer route is ____ kilometres.', answers: ['ten', '10'], why: '*A longer one of ten kilometres*. La corta tiene tres.' },
+      { type: 'gap', q: 'Everyone who finishes will receive a free ____.', answers: ['medal'], why: '*A free medal*.' },
+      { type: 'gap', q: 'The T-shirts were paid for by a local ____.', answers: ['supermarket'], why: '*Our sponsor, a local supermarket, has paid for all the T-shirts*.' }
+    ]
+  },
+  {
+    id: 'l7', title: 'Empezar en el gimnasio', level: 'B2', kind: 'monologue', speakers: ['F'],
+    lines: [
+      { s: 0, t: "I started going to the gym eight months ago because my doctor told me I needed more exercise. At first I hated it. I felt everyone was staring at me. But then I joined a beginners' class and met people in the same situation. Now I go three times a week, and what I enjoy most isn't the exercise itself, it's the friendships I've made." }
+    ],
+    qs: [
+      { type: 'mc', q: 'Why did she start going to the gym?', opts: ['A friend invited her.', 'Her doctor advised it.', 'She wanted to lose weight.'], ans: 1, why: '*My doctor told me I needed more exercise*.' },
+      { type: 'mc', q: 'How did she feel at first?', opts: ['self-conscious', 'bored', 'exhausted'], ans: 0, why: '*I felt everyone was staring at me*: se sentía observada, incómoda.' },
+      { type: 'mc', q: 'What does she enjoy most now?', opts: ['the classes', 'the friendships', 'the exercise'], ans: 1, why: '*What I enjoy most isn\'t the exercise itself, it\'s the friendships*. Truco: "no es X, es Y" indica que la respuesta es Y.' }
+    ]
+  },
+  {
+    id: 'l8', title: 'Teletrabajo: dos compañeros', level: 'C1', kind: 'dialogue', speakers: ['F', 'M'],
+    lines: [
+      { s: 0, t: "I'm in favour of working from home, but honestly, I'm not convinced two days a week is enough." },
+      { s: 1, t: "Really? I'd be happy with one. I find I miss the office when I'm at home for too long." },
+      { s: 0, t: 'I suppose it depends on the person. I get much more done without interruptions.' },
+      { s: 1, t: "Fair enough. Though I think the team benefits when we're all in the same room." }
+    ],
+    qs: [
+      { type: 'mc', q: "What is the woman's opinion of the proposal?", opts: ['Two days is too many.', 'Two days is not enough.', "Working from home doesn't suit her."], ans: 1, why: '*I\'m not convinced two days a week is enough*.' },
+      { type: 'mc', q: 'What does the man think?', opts: ['One day would be enough.', 'He prefers working at home.', "Team spirit isn't important."], ans: 0, why: '*I\'d be happy with one*. Echa de menos la oficina y cree que el equipo gana estando junto.' },
+      { type: 'mc', q: 'Why does the woman like working at home?', opts: ['She has a better computer.', 'She is interrupted less.', 'She saves money on travel.'], ans: 1, why: '*I get much more done without interruptions*.' }
+    ]
+  }
+];
+
+/* ===== Writing: enunciados de práctica (originales) ===== */
+const WRITING = [
+  { id: 'w1', part: 1, kind: 'email', register: 'informal', min: 50, title: 'Invitación de cumpleaños',
+    brief: 'Your friend Alex has invited you to a birthday party next Saturday. Write an email to Alex.',
+    points: ['thank Alex for the invitation', 'say whether you can come and why', 'offer to bring something'] },
+  { id: 'w2', part: 1, kind: 'email', register: 'informal', min: 50, title: 'Un amigo viene a tu ciudad',
+    brief: 'Your English-speaking friend Kim is coming to visit your city. Write an email to Kim.',
+    points: ['say when you can meet', 'explain what you plan to do together', 'tell Kim what clothes to bring'] },
+  { id: 'w3', part: 1, kind: 'email', register: 'formal', min: 50, title: 'Auriculares defectuosos',
+    brief: 'You bought a pair of headphones online, but they do not work. Write an email to the shop.',
+    points: ['say what you bought and when', 'explain what the problem is', 'say what you want the shop to do'] },
+  { id: 'w4', part: 1, kind: 'email', register: 'formal', min: 50, title: 'Curso de idiomas',
+    brief: 'You want to join a language course at a local school. Write an email to the school.',
+    points: ['say which course you are interested in', 'describe your level', 'ask about the price and the start date'] },
+  { id: 'w5', part: 1, kind: 'email', register: 'informal', min: 50, title: 'Nuevo trabajo',
+    brief: 'You have started a new job. Write an email to a friend.',
+    points: ['say what the job is', 'explain what you like about it', 'invite your friend to meet at the weekend'] },
+  { id: 'w6', part: 1, kind: 'email', register: 'formal', min: 50, title: 'No puedes ir a una cita',
+    brief: 'You cannot attend an appointment with your manager next Tuesday. Write an email to your manager.',
+    points: ['say that you cannot come and explain why', 'suggest another day', 'apologise for the inconvenience'] },
+  { id: 'w7', part: 2, kind: 'email', register: 'formal', min: 180, title: 'Centro sin coches',
+    brief: 'Your town council is thinking of closing the city centre to cars. Write an email to the council giving your opinion.',
+    points: ['what advantages it would bring', 'what problems it might cause', 'what you suggest'] },
+  { id: 'w8', part: 2, kind: 'article', register: 'neutral', min: 180, title: 'Aprender idiomas hoy',
+    brief: 'You see this announcement in an English-language magazine: "Is learning a language still essential today? Write an article giving your views."',
+    points: ['why people learn languages', 'what the best way to learn is', 'whether apps can replace teachers'] },
+  { id: 'w9', part: 2, kind: 'report', register: 'formal', min: 180, title: 'Mejorar la zona de estudio',
+    brief: 'Your school wants to improve its study area. Write a report for the director.',
+    points: ['what is wrong at the moment', 'what should be improved', 'roughly how much it might cost'] },
+  { id: 'w10', part: 2, kind: 'email', register: 'informal', min: 180, title: 'Estudiar en el extranjero',
+    brief: 'Your friend wants advice about studying abroad. Write an email to your friend.',
+    points: ['the advantages', 'the difficulties', 'your advice'] },
+  { id: 'w11', part: 2, kind: 'email', register: 'formal', min: 180, title: 'Clases de inglés en la empresa',
+    brief: 'Your company wants to offer free English classes. Write an email to the Human Resources department.',
+    points: ['why the classes would be useful', 'when they should take place', 'what you would like to learn'] },
+  { id: 'w12', part: 2, kind: 'article', register: 'neutral', min: 180, title: 'Redes sociales',
+    brief: 'Write an article for a student magazine called "Social media: friend or enemy?"',
+    points: ['how social media helps people', 'what the dangers are', 'your recommendation'] }
+];
+
+const PHRASES = {
+  informal: {
+    'Empezar': ['Hi Sam,', 'Hello Sam,', 'Dear Sam,'],
+    'Motivo': ["I'm writing to tell you…", 'Thanks so much for…', 'I just wanted to say…'],
+    'Opinión': ['I reckon…', 'I think…', "If you ask me,"],
+    'Contraste': ['But', 'Still,', 'Even so,'],
+    'Sugerir': ['How about…?', "Why don't we…?", 'It would be great if…'],
+    'Cerrar': ['Let me know!', 'Write back soon!', 'Take care,', 'Best wishes,']
+  },
+  formal: {
+    'Empezar': ['Dear Sir or Madam,', 'Dear Mr Harris,', 'Dear Ms Taylor,'],
+    'Motivo': ['I am writing to ask about…', 'I am writing regarding…', 'I am writing to complain about…'],
+    'Opinión': ['In my opinion,', 'I would argue that', 'It seems to me that'],
+    'Añadir': ['In addition,', 'Moreover,', 'Furthermore,'],
+    'Contraste': ['However,', 'Nevertheless,', 'On the other hand,', 'Although', 'Despite'],
+    'Resultado': ['Therefore,', 'As a result,', 'Consequently,'],
+    'Sugerir': ['I would recommend…', 'It would be a good idea to…'],
+    'Pedir': ['I would be grateful if you could…', 'Could you please…?'],
+    'Cerrar': ['I look forward to hearing from you.', 'Yours sincerely,', 'Yours faithfully,', 'Kind regards,']
+  }
+};
+
+/* Conectores que se buscan en el texto (para contar variedad) */
+const LINKERS = ['however', 'although', 'though', 'even though', 'whereas', 'despite', 'in spite of', 'nevertheless', 'on the other hand', 'moreover', 'furthermore', 'in addition', 'besides', 'therefore', 'as a result', 'consequently', 'for example', 'for instance', 'such as', 'first of all', 'finally', 'in conclusion', 'to sum up', 'because', 'since', 'so that', 'unless', 'as long as', 'while', 'in my opinion', 'firstly', 'secondly', 'also'];
+
+/* Errores típicos de hispanohablantes: [regex, consejo] */
+const LINT_RULES = [
+  [/\bI (?:have|am having) (\d+) years?\b/i, 'La edad va con *to be*: "I am 25 (years old)".'],
+  [/\bpeople is\b/i, '*People* es plural: "people are".'],
+  [/\binformations\b|\badvices\b|\bfurnitures\b|\bnews are\b|\binformation are\b|\ban? advice\b|\ban? information\b/i, '*Information, advice, news, furniture* no se cuentan: sin plural ni *a/an* ("a piece of advice").'],
+  [/\b(?:he|she|it) don'?t\b/i, 'Con he/she/it: "doesn\'t".'],
+  [/\bI(?: a|')?m agree\b|\bI am agree\b/i, '"I agree" (agree es verbo, no lleva *am*).'],
+  [/\bdepend(?:s|ed)? (?:of|from|in)\b/i, '"depend on".'],
+  [/\bin (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i, 'Con días: "on Monday".'],
+  [/\b(?:make|makes|making|made) (?:the |my |your |his |her |our |their )?homework\b/i, '"do homework" (make para decisiones, errores, planes…).'],
+  [/\bsince (?:\d+|two|three|four|five|six|seven|eight|nine|ten|a few|several) (?:years?|months?|weeks?|days?|hours?)\b/i, 'Con una duración se usa *for* ("for three years"); *since* va con un momento ("since 2020").'],
+  [/(?:^|[.!?]\s+)is (?:raining|snowing|late|important|difficult|necessary|possible)\b/i, 'El inglés exige sujeto: "It is raining / It is important…".'],
+  [/\b(?:explain|say) me\b/i, '"explain (it) to me" / "tell me" (say y explain llevan *to*).'],
+  [/\bmore (?:better|bigger|taller|easier|cheaper|worse|smaller|older|faster)\b/i, 'Comparativo corto: sin *more* ("better", "bigger").'],
+  [/\b(?:can|could|must|should|will|would|might) to\b/i, 'Los modales no llevan *to* ("I can go", "you should study").'],
+  [/\b(?:interestings|importants|beautifuls|goods|bigs|newes)\b/i, 'Los adjetivos no tienen plural.'],
+  [/\bthe life is\b/i, 'Hablando en general sin artículo: "Life is…".'],
+  [/\bI like very much\b|\bI love very much\b/i, '"I like it very much" (hace falta el objeto).'],
+  [/\bdiscuss(?:ed|es|ing)? about\b/i, '*Discuss* no lleva preposición.'],
+  [/\bmarried with\b/i, '"married to".'],
+  [/\bgo(?:es|ing)? to home\b|\bwent to home\b/i, '"go home" (sin *to*).'],
+  [/\bI(?:'m| am) (?:interesting|boring|exciting|tiring) (?:in|about|of)\b/i, 'Cómo te sientes: *-ed* ("interested", "bored"). Lo que provoca el sentimiento: *-ing*.'],
+  [/\bmy friend and me (?:went|go|are|were|have|had)\b|\bme and my (?:friend|brother|sister|mum|dad) (?:went|go|are|were|have|had)\b/i, 'Como sujeto: "My friend and I…".'],
+  [/\bmuch (?:people|friends|books|things|students|cars)\b/i, 'Con contables: *many* ("many people").'],
+  [/\bi\b(?=[\s,.;!?])/, 'El pronombre *I* siempre va en mayúscula.']
+];
+
+/* ===== Speaking ===== */
+const SPEAK_TIPS = 'Estructura R-R-E: Respuesta + Razón + Ejemplo. Si te quedas en blanco: "Well, let me think…" y sigue.';
+const SPEAKING = [
+  { id: 's1', cat: 'Personal', q: 'Tell me about your family.' },
+  { id: 's2', cat: 'Personal', q: 'What do you do for a living, or what are you studying?' },
+  { id: 's3', cat: 'Personal', q: 'Describe your hometown. What do you like about it?' },
+  { id: 's4', cat: 'Personal', q: 'What do you usually do in your free time?' },
+  { id: 's5', cat: 'Personal', q: "What's your daily routine like?" },
+  { id: 's6', cat: 'Personal', q: 'Tell me about your best friend.' },
+  { id: 's7', cat: 'Personal', q: 'What kind of food do you like, and why?' },
+  { id: 's8', cat: 'Personal', q: 'Why are you learning English?' },
+  { id: 's9', cat: 'Personal', q: 'What are your plans for the next year?' },
+  { id: 's10', cat: 'Pasado', q: 'Tell me about a memorable holiday.' },
+  { id: 's11', cat: 'Pasado', q: 'Describe a time when you helped someone.' },
+  { id: 's12', cat: 'Pasado', q: 'Tell me about a difficult exam or challenge you had.' },
+  { id: 's13', cat: 'Pasado', q: 'What did you do last weekend?' },
+  { id: 's14', cat: 'Pasado', q: 'Tell me about a gift you will never forget.' },
+  { id: 's15', cat: 'Opinión', q: 'Is social media good or bad for young people? Why?' },
+  { id: 's16', cat: 'Opinión', q: 'Should everyone learn a second language at school?' },
+  { id: 's17', cat: 'Opinión', q: 'Is it better to live in a city or in the countryside?' },
+  { id: 's18', cat: 'Opinión', q: 'Does technology make our lives easier?' },
+  { id: 's19', cat: 'Opinión', q: 'Is working from home better than working in an office?' },
+  { id: 's20', cat: 'Opinión', q: 'What can ordinary people do to protect the environment?' },
+  { id: 's21', cat: 'Opinión', q: 'Do you think people read less nowadays? Why?' },
+  { id: 's22', cat: 'Hipotético', q: 'What would you do if you won a lot of money?' },
+  { id: 's23', cat: 'Hipotético', q: 'If you could live anywhere in the world, where would you live?' },
+  { id: 's24', cat: 'Hipotético', q: 'If you could change one thing about your town, what would it be?' },
+  { id: 's25', cat: 'Hipotético', q: 'Imagine you could meet any famous person. Who would you choose and why?' },
+  { id: 's26', cat: 'Foto', scene: '🏖️ 🏄 🌴 ☀️ 👨‍👩‍👧', q: 'Describe this picture: a family on a beach.' },
+  { id: 's27', cat: 'Foto', scene: '🍽️ 👩‍🍳 🍷 🕯️ 👫', q: 'Describe this picture: two people having dinner in a restaurant.' },
+  { id: 's28', cat: 'Foto', scene: '💻 ☕ 📋 👩‍💼 🪟', q: 'Describe this picture: a woman working in an office.' },
+  { id: 's29', cat: 'Foto', scene: '🛒 🥕 🍎 🧺 👵', q: 'Describe this picture: an older woman shopping at a market.' },
+  { id: 's30', cat: 'Foto', scene: '📚 🏫 ✏️ 🧑‍🏫 👧', q: 'Describe this picture: a teacher and students in a classroom.' },
+  { id: 's31', cat: 'Foto', scene: '🌳 🧺 🥪 🐕 👨‍👩‍👦', q: 'Describe this picture: a family having a picnic in a park.' }
+];
+const FILLERS = ['um', 'uh', 'er', 'erm', 'like', 'you know', 'basically', 'actually'];
+const SPEAK_PHRASES = [
+  ['Ganar tiempo', ['Well, let me think…', "That's a good question.", 'To be honest,']],
+  ['No sé la palabra', ["It's a kind of…", "It's something you use to…", "I can't remember the word, but it's like…"]],
+  ['Opinión', ['In my opinion,', 'I tend to think that…', "As far as I'm concerned,"]],
+  ['Foto', ['This photo shows…', 'In the foreground / background…', 'It looks as if…', 'They might be…']],
+  ['Corregirte', ['I mean…', 'Sorry, what I meant was…']]
+];
+
+/* ===== Flashcards: [inglés, español, ejemplo] ===== */
+const DECKS = [
+  { id: 'phr', title: 'Phrasal verbs', icon: '🔗', cards: [
+    ['look forward to', 'tener ganas de (+ -ing)', "I'm looking forward to meeting you."],
+    ['carry on', 'continuar', 'Carry on reading, please.'],
+    ['take part in', 'participar en', 'She took part in a competition.'],
+    ['come up with', 'idear, ocurrírsele a uno', 'He came up with a great plan.'],
+    ['find out', 'averiguar, descubrir', 'I need to find out the price.'],
+    ['give up', 'rendirse; dejar (un hábito)', 'Never give up.'],
+    ['put off', 'aplazar', 'They put off the meeting.'],
+    ['turn out', 'resultar, acabar siendo', 'It turned out to be a mistake.'],
+    ['deal with', 'ocuparse de, tratar con', 'We must deal with this today.'],
+    ['run out of', 'quedarse sin', 'We ran out of petrol.'],
+    ['set up', 'montar, fundar', 'She set up her own business.'],
+    ['get along with', 'llevarse bien con', 'I get along with my boss.'],
+    ['take up', 'empezar una afición', 'He took up golf last year.'],
+    ['look after', 'cuidar de', 'Can you look after my dog?'],
+    ['bring up', 'criar; sacar un tema', 'She was brought up in Spain.'],
+    ['break down', 'averiarse; derrumbarse', 'The car broke down.'],
+    ['call off', 'cancelar', 'The match was called off.'],
+    ['check in', 'registrarse (hotel, aeropuerto)', 'We checked in at six.'],
+    ['fill in', 'rellenar (un formulario)', 'Please fill in this form.'],
+    ['get over', 'superar, recuperarse de', 'She got over the flu quickly.'],
+    ['go through', 'pasar por; revisar', "Let's go through the plan again."],
+    ['make up', 'inventar; reconciliarse', 'He made up an excuse.'],
+    ['pick up', 'recoger; aprender sin esfuerzo', "I'll pick you up at eight."],
+    ['turn down', 'rechazar; bajar el volumen', 'She turned down the offer.'],
+    ['catch up with', 'ponerse al día con', "I'll catch up with you later."],
+    ['put up with', 'aguantar, soportar', "I can't put up with the noise."],
+    ['cut down on', 'reducir', "I'm cutting down on sugar."],
+    ['end up', 'acabar (en un sitio o situación)', 'We ended up at home.']
+  ] },
+  { id: 'col', title: 'Colocaciones', icon: '🧩', cards: [
+    ['make a decision', 'tomar una decisión', 'I need to make a decision soon.'],
+    ['make an effort', 'esforzarse', 'Please make an effort to arrive on time.'],
+    ['make a mistake', 'cometer un error', 'Everybody makes mistakes.'],
+    ['make progress', 'hacer progresos', "You've made great progress."],
+    ['make a complaint', 'presentar una queja', "I'd like to make a complaint."],
+    ['do homework', 'hacer los deberes', 'I do my homework after dinner.'],
+    ['do research', 'investigar', 'She does research on climate change.'],
+    ['do your best', 'hacer todo lo posible', 'Just do your best.'],
+    ['take a risk', 'arriesgarse', 'He took a big risk.'],
+    ['take advantage of', 'aprovechar', 'Take advantage of the free classes.'],
+    ['take place', 'tener lugar', 'The meeting takes place on Friday.'],
+    ['take care of', 'cuidar de', 'She takes care of her grandmother.'],
+    ['pay attention', 'prestar atención', 'Pay attention to the instructions.'],
+    ['keep in touch', 'mantener el contacto', "Let's keep in touch."],
+    ['keep a promise', 'cumplir una promesa', 'He always keeps his promises.'],
+    ['break a promise', 'romper una promesa', 'She broke her promise.'],
+    ['meet a deadline', 'cumplir un plazo', 'We must meet the deadline.'],
+    ['catch a cold', 'resfriarse', 'I caught a cold last week.'],
+    ['reach a conclusion', 'llegar a una conclusión', 'They reached a conclusion after a long talk.'],
+    ['have a look at', 'echar un vistazo a', 'Can you have a look at this?'],
+    ['get a close look at', 'ver de cerca', 'They get a close look at the creature.'],
+    ['run a business', 'dirigir un negocio', 'He runs a small business.']
+  ] },
+  { id: 'con', title: 'Conectores', icon: '🔀', cards: [
+    ['however', 'sin embargo', 'It was cold. However, we went out.'],
+    ['although', 'aunque (+ sujeto + verbo)', 'Although it rained, we went out.'],
+    ['even though', 'aunque (más enfático)', 'Even though he was tired, he kept working.'],
+    ['despite / in spite of', 'a pesar de (+ nombre o -ing)', 'Despite the rain, we went out.'],
+    ['whereas', 'mientras que', 'He likes tea, whereas she prefers coffee.'],
+    ['moreover / furthermore', 'además (formal)', 'The plan is cheap. Moreover, it is quick.'],
+    ['in addition', 'además', 'In addition, the staff are friendly.'],
+    ['therefore', 'por lo tanto', 'The train was cancelled; therefore, we took a taxi.'],
+    ['consequently / as a result', 'en consecuencia / como resultado', 'As a result, sales fell.'],
+    ['nevertheless', 'no obstante, aun así', 'Nevertheless, I think we should go.'],
+    ['on the other hand', 'por otro lado', 'On the other hand, it is expensive.'],
+    ['for instance / for example', 'por ejemplo', 'For instance, we could use public transport.'],
+    ['in conclusion / to sum up', 'en conclusión / en resumen', 'In conclusion, I agree with the plan.'],
+    ['unless', 'a menos que', "Unless you hurry, you'll be late."],
+    ['as long as', 'siempre que', "You can go as long as you're back by ten."],
+    ['as soon as', 'en cuanto', "Call me as soon as you arrive."],
+    ['in case', 'por si acaso', 'Take an umbrella in case it rains.'],
+    ['apart from', 'aparte de, salvo', 'Apart from Tom, everyone came.'],
+    ['instead of', 'en lugar de', 'Let\'s walk instead of taking the bus.'],
+    ['at first', 'al principio', 'At first, I was nervous.']
+  ] },
+  { id: 'pdf', title: 'Vocabulario de tus PDFs', icon: '📄', cards: [
+    ['nomination', 'candidatura, propuesta', 'Please send your nominations by Friday.'],
+    ['retiring', 'que se jubila / saliente', 'our retiring secretary'],
+    ['keen (on / to do)', 'entusiasta, con ganas', "I wasn't keen to enter."],
+    ['eventually', 'finalmente (NO "eventualmente")', 'She eventually reached the final.'],
+    ['reluctant (to)', 'reacio a', 'Most people are reluctant to do this.'],
+    ['reluctance', 'reticencia', 'the reluctance to share worries'],
+    ['tedious', 'pesado, aburrido', 'The reading can feel rather tedious.'],
+    ['entice', 'atraer, tentar', 'It would be nice to entice a few more members.'],
+    ['peruse', 'leer con detenimiento (formal)', 'We peruse the bestsellers list.'],
+    ['envious (of)', 'envidioso de', 'I was envious of the locals.'],
+    ['drawn to', 'atraído por', 'Cyclists are drawn to the race.'],
+    ['inferiority complex', 'complejo de inferioridad', 'He has an inferiority complex.'],
+    ['determination', 'determinación, perseverancia', 'Determination is the key.'],
+    ['mountain pass', 'puerto de montaña', 'The route crosses several mountain passes.'],
+    ['show-stopper', 'algo espectacular; algo que lo detiene todo', 'The weather was a show-stopper.'],
+    ['moisture', 'humedad', 'changes in moisture levels'],
+    ['boastful', 'fanfarrón', "We don't want to seem boastful."],
+    ['ingratiating', 'adulador, zalamero', 'Compliments may sound ingratiating.'],
+    ['erroneous', 'erróneo', 'an erroneous assumption'],
+    ['replicate', 'reproducir, repetir (un estudio)', 'Multiple studies have replicated this finding.'],
+    ['sabotage', 'sabotear', 'a barrier sabotaging our ability to connect']
+  ] },
+  { id: 'fal', title: 'Falsos amigos', icon: '⚠️', cards: [
+    ['actually', 'de hecho (NO actualmente = currently)', 'Actually, I disagree.'],
+    ['eventually', 'finalmente (NO eventualmente)', 'Eventually, we found it.'],
+    ['assist', 'ayudar (NO asistir = attend)', 'Can I assist you?'],
+    ['sensible', 'sensato (NO sensible = sensitive)', 'That is a sensible idea.'],
+    ['realize', 'darse cuenta (NO realizar = carry out)', "I didn't realize it was late."],
+    ['library', 'biblioteca (NO librería = bookshop)', 'I borrowed a book from the library.'],
+    ['embarrassed', 'avergonzado (NO embarazada = pregnant)', 'I felt embarrassed.'],
+    ['carpet', 'alfombra (NO carpeta = folder)', 'The carpet is new.'],
+    ['parents', 'padres (NO parientes = relatives)', 'My parents live in Sevilla.'],
+    ['pretend', 'fingir (NO pretender = intend)', 'He pretended to be asleep.'],
+    ['constipated', 'estreñido (NO constipado = to have a cold)', 'I have a cold.'],
+    ['lecture', 'conferencia, clase magistral (NO lectura = reading)', 'The lecture was interesting.'],
+    ['support', 'apoyar (NO soportar = put up with)', 'My family supports me.'],
+    ['argue', 'discutir, pelearse', 'They argue all the time.']
+  ] },
+  { id: 'prp', title: 'Preposiciones', icon: '📍', cards: [
+    ['afraid of', 'tener miedo de', "I'm afraid of spiders."],
+    ['good at', 'bueno en', 'She is good at maths.'],
+    ['interested in', 'interesado en', "I'm interested in history."],
+    ['proud of', 'orgulloso de', "He's proud of his son."],
+    ['keen on', 'aficionado a', "I'm keen on cycling."],
+    ['responsible for', 'responsable de', 'She is responsible for sales.'],
+    ['famous for', 'famoso por', 'Paris is famous for its museums.'],
+    ['different from', 'diferente de', 'This is different from that.'],
+    ['worried about', 'preocupado por', "I'm worried about the exam."],
+    ['tired of', 'harto de', "I'm tired of waiting."],
+    ['fond of', 'aficionado a, encariñado con', "She's fond of her cat."],
+    ['jealous of', 'celoso de', "He's jealous of his brother."],
+    ['married to', 'casado con', "He's married to a teacher."],
+    ['depend on', 'depender de', 'It depends on the weather.'],
+    ['arrive at / in', 'llegar a (lugar concreto / ciudad)', 'We arrived at the airport in Rome.'],
+    ['listen to', 'escuchar', 'Listen to this song.'],
+    ['wait for', 'esperar (a)', "I'm waiting for the bus."],
+    ['succeed in', 'tener éxito en', 'She succeeded in finding a job.'],
+    ['insist on', 'insistir en', 'He insisted on paying.'],
+    ['apologise for', 'disculparse por', 'I apologise for the delay.'],
+    ['complain about', 'quejarse de', 'He complained about the noise.']
+  ] }
+];
+const PLAN = [
+  'Leer la guía (Reading, Listening, Writing, Speaking)',
+  'Simulacro express de la app (20 preguntas)',
+  'Un texto de lectura con huecos de frases',
+  'Dos audios de Listening',
+  'Un email de Writing (Parte 1) en 15 minutos',
+  'Un texto largo de Writing (Parte 2) en 25 minutos',
+  'Contestar 5 preguntas de Speaking en voz alta',
+  'Repasar 20 flashcards',
+  'Preparar documentación, auriculares y cargador',
+  'Dormir 7–8 horas'
+];
+const CHEATS = [
+  ['10 reglas de oro', [
+    'La respuesta está en el texto o el audio, no en tu opinión.',
+    'Las trampas repiten palabras del texto pero cambian el significado.',
+    'En los huecos, mira primero la palabra de antes y la de después.',
+    'Predice la clase de palabra (sustantivo, verbo, preposición) antes de elegir.',
+    '*Both* en la pregunta: los dos hablantes lo dicen.',
+    'En Listening, la opinión suele llegar después de *but, actually, however*.',
+    'Cubre los tres puntos de cada tarea de Writing.',
+    'Un solo registro (formal o informal) en todo el texto.',
+    'En Speaking: respuesta, razón y ejemplo.',
+    'No dejes nada en blanco.'
+  ]],
+  ['Writing: estructura', [
+    'Parte 1: saludo, motivo, los 3 puntos, cierre, despedida.',
+    'Parte 2: saludo o título, introducción, un párrafo por punto, conclusión, despedida.',
+    'B2 en la Parte 2: 1 condicional, 1 pasiva, 1 relativa y 2 conectores de contraste.',
+    'Revisa al final: sujeto-verbo, tiempos, ortografía, mayúsculas y nº de palabras.'
+  ]],
+  ['Speaking: frases salvavidas', [
+    '*Well, let me think…* / *That\'s a good question.* / *To be honest…*',
+    '*It\'s a kind of… / It\'s something you use to…*',
+    '*In my opinion… / I tend to think that…*',
+    '*It looks as if… / They might be… / She seems to be…*',
+    '*I mean… / Sorry, what I meant was…*'
+  ]]
+];
+
+/* ===== Utilidades ===== */
+const $ = (s, r = document) => r.querySelector(s);
+function el(tag, props, ...kids) {
+  const n = document.createElement(tag);
+  if (props) {
+    for (const [k, v] of Object.entries(props)) {
+      if (v == null || v === false) continue;
+      if (k === 'class') n.className = v;
+      else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v);
+      else if (v === true) n.setAttribute(k, '');
+      else n.setAttribute(k, v);
+    }
+  }
+  for (const kid of kids.flat(Infinity)) {
+    if (kid == null || kid === false) continue;
+    n.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+  }
+  return n;
+}
+function fmt(text) {
+  const frag = document.createDocumentFragment();
+  String(text).split('*').forEach((p, i) => { if (p) frag.append(i % 2 ? el('em', null, p) : document.createTextNode(p)); });
+  return frag;
+}
+const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+const pct = (c, t) => (t ? Math.round((100 * c) / t) : 0);
+const mmss = s => { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+const norm = s => String(s == null ? '' : s).toLowerCase().replace(/[‘’]/g, "'").replace(/[.,;:!?"]+$/g, '').replace(/\s+/g, ' ').trim();
+const LETTERS = 'ABCDEFGH';
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* ===== Almacenamiento local (con respaldo en memoria) ===== */
+const KEY = 'guiri-pass-v1';
+const Store = {
+  d: {},
+  load() {
+    let d = null;
+    try { d = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { d = null; }
+    if (!d || typeof d !== 'object') d = {};
+    for (const k of ['q', 'cards', 'listen', 'passage', 'write', 'plan']) if (!d[k] || typeof d[k] !== 'object') d[k] = {};
+    if (!d.speak || typeof d.speak !== 'object') d.speak = { n: 0, runs: [] };
+    if (!Array.isArray(d.speak.runs)) d.speak.runs = [];
+    if (!Array.isArray(d.sims)) d.sims = [];
+    this.d = d;
+  },
+  save() { try { localStorage.setItem(KEY, JSON.stringify(this.d)); } catch (e) { /* sin almacenamiento */ } },
+  reset() { try { localStorage.removeItem(KEY); } catch (e) { /* nada */ } this.d = {}; this.load(); }
+};
+function recQ(id, ok) {
+  const s = Store.d.q[id] || (Store.d.q[id] = { a: 0, c: 0, w: false });
+  s.a++; if (ok) s.c++; s.w = !ok; s.t = Date.now(); Store.save();
+}
+function recL(id, ok) {
+  const s = Store.d.listen[id] || (Store.d.listen[id] = { a: 0, c: 0 });
+  s.a++; if (ok) s.c++; Store.save();
+}
+const sumStats = obj => Object.values(obj).reduce((a, s) => { a.a += s.a || 0; a.c += s.c || 0; return a; }, { a: 0, c: 0 });
+
+function stamps() {
+  const r = sumStats(Store.d.q), l = sumStats(Store.d.listen);
+  const wOk = Object.values(Store.d.write).filter(w => w && w.ok).length;
+  const known = Object.values(Store.d.cards).filter(c => c && c.b >= 2).length;
+  const sp = Store.d.speak.n || 0;
+  return [
+    { ic: '📖', name: 'Reading', done: r.a >= 15 && pct(r.c, r.a) >= 75, prog: Math.min(1, r.a / 15), hint: `Reading: ${r.a}/15 respuestas, ${pct(r.c, r.a)}% de aciertos (meta 75%)` },
+    { ic: '🎧', name: 'Listening', done: l.a >= 8 && pct(l.c, l.a) >= 70, prog: Math.min(1, l.a / 8), hint: `Listening: ${l.a}/8 respuestas, ${pct(l.c, l.a)}% (meta 70%)` },
+    { ic: '✍️', name: 'Writing', done: wOk >= 2, prog: Math.min(1, wOk / 2), hint: `Writing: ${wOk}/2 textos completos y casi sin errores` },
+    { ic: '🎤', name: 'Speaking', done: sp >= 5, prog: Math.min(1, sp / 5), hint: `Speaking: ${sp}/5 respuestas habladas` },
+    { ic: '🃏', name: 'Vocab', done: known >= 40, prog: Math.min(1, known / 40), hint: `Vocabulario: ${known}/40 cartas dominadas` }
+  ];
+}
+
+/* ===== Voz (Listening) ===== */
+const TTS = {
+  ok: typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined',
+  voices: [], tok: 0, playing: false,
+  init() {
+    if (!this.ok) return;
+    const load = () => { this.voices = (speechSynthesis.getVoices() || []).filter(v => /^en([-_]|$)/i.test(v.lang)); };
+    load();
+    try { speechSynthesis.addEventListener('voiceschanged', load); } catch (e) { /* nada */ }
+  },
+  voiceFor(role) {
+    const v = this.voices; if (!v.length) return null;
+    const gb = v.filter(x => /en[-_]GB/i.test(x.lang));
+    const pool = gb.length ? gb : v;
+    const fem = /female|zira|samantha|susan|hazel|libby|sonia|karen|serena|victoria|amy|emma|joanna/i;
+    const mal = /\bmale\b|david|mark|daniel|george|ryan|alex|oliver|brian|arthur|james/i;
+    if (role === 'F') return pool.find(x => fem.test(x.name)) || pool[0];
+    if (role === 'M') return pool.find(x => mal.test(x.name)) || pool[Math.min(1, pool.length - 1)];
+    return pool[0];
+  },
+  stop() { this.tok++; this.playing = false; if (this.ok) { try { speechSynthesis.cancel(); } catch (e) { /* nada */ } } },
+  play(items, rate, onEnd) {
+    this.stop();
+    const tok = this.tok; this.playing = true;
+    const q = items.slice();
+    const same = this.voiceFor('F') === this.voiceFor('M');
+    const step = () => {
+      if (tok !== this.tok) return;
+      const it = q.shift();
+      if (!it) { this.playing = false; if (onEnd) onEnd(); return; }
+      const u = new SpeechSynthesisUtterance(it.text);
+      const v = this.voiceFor(it.role);
+      if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'en-GB';
+      u.rate = rate;
+      u.pitch = (!v || same) ? (it.role === 'F' ? 1.18 : it.role === 'M' ? 0.82 : 1) : 1;
+      u.onend = () => setTimeout(step, it.pause || 120);
+      u.onerror = () => { if (tok === this.tok) setTimeout(step, 60); };
+      speechSynthesis.speak(u);
+    };
+    setTimeout(step, 90);
+  }
+};
+function ttsItems(item) {
+  const out = [];
+  item.lines.forEach(line => {
+    const role = item.speakers[line.s] || 'F';
+    if (line.label) out.push({ text: line.label.replace('Speaker ', 'Speaker number '), role: 'N', pause: 250 });
+    const parts = line.t.match(/[^.!?]+[.!?]+["']?|[^.!?]+$/g) || [line.t];
+    parts.forEach((p, i) => out.push({ text: p.trim(), role, pause: i === parts.length - 1 ? 520 : 90 }));
+  });
+  return out;
+}
+
+/* ===== Corrector de Writing ===== */
+const AUX = new Set(['does', 'did', 'do', 'will', 'would', 'can', 'could', 'should', 'must', 'may', 'might', 'let', 'make', 'makes', 'made', 'help', 'helps']);
+function analyzeWriting(text, p) {
+  const t = text || '';
+  const n = (t.match(/[A-Za-z][A-Za-z'’-]*|\d+/g) || []).length;
+  const issues = [];
+  LINT_RULES.forEach(([re, msg]) => { const m = t.match(re); if (m) issues.push({ snip: m[0].trim(), msg }); });
+  const re = /\b(he|she|it)\s+(have|go|do)\b/gi;
+  let m;
+  while ((m = re.exec(t))) {
+    const pw = ((t.slice(Math.max(0, m.index - 14), m.index).match(/(\w+)\s+$/) || [])[1] || '').toLowerCase();
+    if (!AUX.has(pw)) issues.push({ snip: m[1] + ' ' + m[2], msg: 'Con he/she/it: "has / goes / does".' });
+  }
+  const found = LINKERS.filter(l => new RegExp('\\b' + l.replace(/ /g, '\\s+') + '\\b', 'i').test(t));
+  const struct = {
+    cond: /\bif\b[^.!?]*\b(?:would|could|might|will)\b|\bif\b[^.!?]*['’](?:d|ll)\b/i.test(t),
+    passive: /\b(?:is|are|was|were|be|been|being)\s+(?:\w+ed|taken|given|seen|known|written|broken|chosen|driven|eaten|forgotten|hidden|spoken|stolen|worn|made|done|built|held|kept|sold|paid|found|told|left|lost|bought|brought|sent|shown)\b/i.test(t),
+    relative: /\b(?:who|whom|whose|which|where)\b/i.test(t),
+    contrast: /\b(?:however|although|though|whereas|despite|in spite of|nevertheless|on the other hand|even though)\b/i.test(t)
+  };
+  const contractions = (t.match(/\b\w+(?:n['’]t|['’](?:m|re|ve|ll|d))\b/gi) || []).length;
+  const first = t.trim().slice(0, 40), last = t.trim().slice(-90);
+  const formal = p && p.register === 'formal';
+  const isEmail = p && p.kind === 'email';
+  const greeting = isEmail ? (formal ? /^\s*(?:dear|to whom)/i.test(first) : /^\s*(?:hi|hello|hey|dear)\b/i.test(first)) : null;
+  const signoff = isEmail ? /(?:sincerely|faithfully|regards|best wishes|take care|cheers|love|see you|write soon|all the best|looking forward)/i.test(last) : null;
+  const tips = [];
+  if (formal && contractions > 0) tips.push('Registro formal: evita contracciones (' + contractions + ' encontradas). Escribe "I am", "do not"…');
+  if (p && p.register === 'informal' && n >= 30 && contractions === 0) tips.push('Registro informal: algunas contracciones (I\'m, don\'t) suenan más natural.');
+  if (p && p.part === 2 && n >= 60 && found.length < 4) tips.push('Usa más conectores variados (ahora ' + found.length + '). Meta: 4 o más.');
+  if (p && p.part === 1 && n >= 30 && found.length < 2) tips.push('Añade 2 conectores sencillos (because, so, also, however).');
+  if (n >= 50 && !isEmail && !/[.!?]\s*$/.test(t.trim())) tips.push('Termina la última frase con punto.');
+  const long = t.split(/[.!?]+/).filter(s => s.trim().split(/\s+/).length > 35).length;
+  if (long) tips.push('Hay ' + long + ' frase(s) muy larga(s). Divídelas para evitar errores.');
+  return { n, min: p ? p.min : 0, issues, tips, found, struct, contractions, greeting, signoff, ok: !!p && n >= p.min && issues.length <= 2 };
+}
+
+/* ===== Análisis de Speaking ===== */
+function analyzeSpeech(text, secs) {
+  const words = (text.toLowerCase().match(/[a-z']+/g) || []);
+  const n = words.length;
+  const fill = FILLERS.map(f => [f, (text.toLowerCase().match(new RegExp('\\b' + f + '\\b', 'g')) || []).length]).filter(x => x[1] > 0);
+  const linkers = LINKERS.filter(l => new RegExp('\\b' + l.replace(/ /g, '\\s+') + '\\b', 'i').test(text));
+  return {
+    n, wpm: secs > 0 ? Math.round((n / secs) * 60) : 0, fill, linkers,
+    hasReason: /\b(because|since|so that|that's why|the reason)\b/i.test(text),
+    hasExample: /\b(for example|for instance|such as|last (?:week|year|summer|weekend|month)|once|one day|when i was)\b/i.test(text),
+    uniq: new Set(words).size
+  };
+}
+
+/* ===== Enrutado ===== */
+let route = { name: 'home' };
+let cleanups = [];
+let deferredInstall = null;
+function onLeave(fn) { cleanups.push(fn); }
+function go(r) {
+  cleanups.forEach(f => { try { f(); } catch (e) { /* nada */ } });
+  cleanups = [];
+  TTS.stop();
+  route = r;
+  render();
+  window.scrollTo(0, 0);
+}
+const VIEWS = {};
+function render() {
+  const main = $('#main');
+  main.replaceChildren(VIEWS[route.name](route));
+  const tab = { home: 'home', quiz: 'quiz', 'quiz-run': 'quiz', 'quiz-end': 'quiz', passage: 'quiz', listen: 'listen', 'listen-item': 'listen', write: 'write', 'write-edit': 'write', speak: 'speak', 'speak-run': 'speak', cards: 'cards', 'cards-run': 'cards', 'cards-end': 'cards' }[route.name];
+  document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+}
+/* Botón de dos toques para acciones destructivas (sin confirm(), que no funciona en todos los entornos). */
+function confirmTap(btn, askLabel, action) {
+  const orig = btn.textContent;
+  let armed = false, t = null;
+  btn.addEventListener('click', () => {
+    if (!armed) { armed = true; btn.textContent = askLabel; t = setTimeout(() => { armed = false; btn.textContent = orig; }, 3500); return; }
+    clearTimeout(t); armed = false; btn.textContent = orig; action();
+  });
+}
+const header = (title, sub) => el('div', { class: 'hdr' }, el('div', { class: 'logo' }, 'GP'), el('div', null, el('h1', null, title), sub && el('p', null, sub)));
+const back = (to, label) => el('button', { class: 'btn small ghost', onclick: () => go(to) }, '← ' + (label || 'Volver'));
+
+/* ===== Conjunto de preguntas reutilizable (Listening y lecturas) ===== */
+function isOk(q, a) {
+  if (q.type === 'mc') return a === q.ans;
+  if (q.type === 'gap') return q.answers.map(norm).includes(norm(a));
+  return q.ans.map((x, k) => !!a && a[k] === x);
+}
+function qset(qs, st, rerender) {
+  const wrap = el('div');
+  qs.forEach((q, i) => {
+    const card = el('div', { class: 'card' });
+    card.append(el('span', { class: 'chip plain' }, 'Pregunta ' + (i + 1)), el('p', { class: 'q' }, q.q));
+    if (q.type === 'mc') {
+      const box = el('div', { class: 'opts' });
+      q.opts.forEach((o, j) => {
+        let cls = 'opt';
+        if (st.checked) cls += j === q.ans ? ' correct' : (st.ans[i] === j ? ' wrong' : '');
+        else if (st.ans[i] === j) cls += ' sel';
+        box.append(el('button', { class: cls, disabled: st.checked, onclick: () => { st.ans[i] = j; rerender(); } }, el('b', null, LETTERS[j]), el('span', null, o)));
+      });
+      card.append(box);
+    } else if (q.type === 'gap') {
+      const inp = el('input', { type: 'text', autocomplete: 'off', autocapitalize: 'none', spellcheck: 'false', placeholder: 'Escribe la palabra…', value: st.ans[i] || '', disabled: st.checked, 'aria-label': 'Respuesta ' + (i + 1) });
+      inp.addEventListener('input', () => { st.ans[i] = inp.value; });
+      card.append(el('div', { style: 'margin-top:10px' }, inp));
+    } else {
+      st.ans[i] = st.ans[i] || [];
+      q.ans.forEach((correct, k) => {
+        const sel = el('select', { disabled: st.checked, 'aria-label': 'Speaker ' + (k + 1) }, el('option', { value: '' }, '— elige —'), q.opts.map((o, j) => el('option', { value: LETTERS[j], selected: st.ans[i][k] === LETTERS[j] }, LETTERS[j] + ' · ' + o)));
+        sel.addEventListener('change', () => { st.ans[i][k] = sel.value; });
+        const row = el('div', { class: 'match-row' }, el('label', null, 'Speaker ' + (k + 1)), sel);
+        if (st.checked) row.append(el('span', { class: 'chip ' + (st.ans[i][k] === correct ? 'ok' : 'bad') }, st.ans[i][k] === correct ? '✓' : '✗ ' + correct));
+        card.append(row);
+      });
+    }
+    if (st.checked) {
+      const ok = isOk(q, st.ans[i]);
+      if (q.type === 'match') {
+        card.append(el('div', { class: 'fb ok' }, el('b', null, 'Por qué:'), el('ul', { style: 'margin:4px 0 0 18px;padding:0' }, q.why.map((w, k) => el('li', null, 'Speaker ' + (k + 1) + ' → ' + q.ans[k] + ': ', fmt(w))))));
+      } else {
+        card.append(el('div', { class: 'fb ' + (ok ? 'ok' : 'bad') }, el('b', null, ok ? '✓ Correcto' : '✗ Respuesta: ' + (q.type === 'mc' ? q.opts[q.ans] : q.answers[0])), fmt(q.why)));
+      }
+    }
+    wrap.append(card);
+  });
+  return wrap;
+}
+function checkQset(qs, st, prefix, rec) {
+  let c = 0, t = 0;
+  qs.forEach((q, i) => {
+    const ok = isOk(q, st.ans[i]);
+    if (q.type === 'match') ok.forEach((o, k) => { t++; if (o) c++; rec(prefix + i + '-' + k, o); });
+    else { t++; if (ok) c++; rec(prefix + i, ok); }
+  });
+  st.checked = true; st.score = { c, t };
+  return st.score;
+}
+const scoreBadge = s => el('div', { class: 'card tight row between' }, el('div', null, el('span', { class: 'score' }, s.c + '/' + s.t), el('span', { class: 'muted' }, '  ' + pct(s.c, s.t) + '%')), pct(s.c, s.t) >= 75 ? el('span', { class: 'stamp' }, 'Aprobado') : el('span', { class: 'chip warn' }, 'Repásalo y repite'));
+
+/* ===== Home ===== */
+VIEWS.home = function () {
+  const root = el('div');
+  root.append(header('Guiri Pass', 'Entrena. Aprueba. Sella el pasaporte.'));
+  const st = stamps();
+  const done = st.filter(s => s.done).length;
+  root.append(el('div', { class: 'card' },
+    el('div', { class: 'row between' }, el('h2', null, '🛂 Pasaporte guiri'), el('span', { class: 'chip ' + (done === 5 ? 'ok' : 'plain') }, done + '/5 sellos')),
+    el('p', { class: 'muted small' }, done === 5 ? '¡Pasaporte concedido! Estás listo para mañana.' : 'Consigue los 5 sellos practicando. Cada uno tiene una meta.'),
+    el('div', { class: 'passport' }, st.map(s => el('div', { class: 'stampbox' + (s.done ? ' done' : '') }, el('span', { class: 'ic' }, s.ic), el('span', null, s.name), el('div', { class: 'bar' + (s.done ? ' ok' : '') }, el('i', { style: 'width:' + Math.round(s.prog * 100) + '%' }))))),
+    el('div', { class: 'small muted', style: 'margin-top:10px' }, st.map(s => el('div', null, (s.done ? '✓ ' : '· ') + s.hint)))
+  ));
+  const wrong = QUIZ.filter(q => Store.d.q[q.id] && Store.d.q[q.id].w);
+  const due = DECKS.reduce((n, d) => n + d.cards.filter((c, i) => { const s = Store.d.cards[d.id + ':' + i]; return !s || s.d <= Date.now(); }).length, 0);
+  root.append(el('div', { class: 'card' },
+    el('h2', null, 'Empieza ya'),
+    el('div', { class: 'grid2' },
+      el('button', { class: 'btn primary', onclick: () => startQuiz(pickSim(), { title: 'Simulacro express', exam: true, limit: 900 }) }, '⏱️ Simulacro express'),
+      el('button', { class: 'btn', disabled: !wrong.length, onclick: () => startQuiz(shuffle(wrong), { title: 'Repaso de fallos' }) }, '🔁 Mis fallos (' + wrong.length + ')'),
+      el('button', { class: 'btn', onclick: () => go({ name: 'cards' }) }, '🃏 Cartas (' + due + ')'),
+      el('button', { class: 'btn', onclick: () => go({ name: 'speak' }) }, '🎤 Hablar 1 minuto'))
+  ));
+  const plan = el('div', { class: 'card' }, el('h2', null, '✅ Plan de esta noche'));
+  PLAN.forEach((t, i) => {
+    const cb = el('input', { type: 'checkbox', id: 'plan' + i });
+    cb.checked = !!Store.d.plan[i];
+    const row = el('label', { class: 'todo' + (cb.checked ? ' done' : ''), for: 'plan' + i }, cb, el('span', null, t));
+    cb.addEventListener('change', () => { Store.d.plan[i] = cb.checked; Store.save(); row.classList.toggle('done', cb.checked); });
+    plan.append(row);
+  });
+  root.append(plan);
+  const ch = el('div', null, el('h2', null, '📌 Chuleta rápida'));
+  CHEATS.forEach(([title, items]) => ch.append(el('details', null, el('summary', null, title), el('ul', null, items.map(i => el('li', null, fmt(i)))))));
+  root.append(ch);
+  const foot = el('div', { class: 'row wrap', style: 'margin-top:14px' });
+  if (deferredInstall) foot.append(el('button', { class: 'btn small', onclick: async () => { deferredInstall.prompt(); try { await deferredInstall.userChoice; } catch (e) { /* nada */ } deferredInstall = null; render(); } }, '📲 Instalar app'));
+  const resetBtn = el('button', { class: 'btn small ghost' }, 'Borrar progreso');
+  confirmTap(resetBtn, '¿Seguro? Pulsa otra vez', () => { Store.reset(); render(); });
+  foot.append(resetBtn);
+  root.append(foot, el('p', { class: 'muted small' }, 'Tu progreso se guarda solo en este dispositivo. Preguntas y textos originales para practicar; no son del examen oficial.'));
+  return root;
+};
+
+/* ===== Quiz ===== */
+function pickSim() {
+  const by = {};
+  shuffle(QUIZ).forEach(q => (by[q.topic] = by[q.topic] || []).push(q));
+  const keys = shuffle(Object.keys(by)), out = [];
+  while (out.length < 20) {
+    let added = false;
+    for (const k of keys) { if (by[k].length && out.length < 20) { out.push(by[k].pop()); added = true; } }
+    if (!added) break;
+  }
+  return shuffle(out);
+}
+function startQuiz(items, o) {
+  go({ name: 'quiz-run', items, i: 0, res: [], title: o.title, exam: !!o.exam, limit: o.limit || 0, t0: Date.now(), fb: null });
+}
+VIEWS.quiz = function () {
+  const root = el('div');
+  root.append(header('Reading y Use of English', 'Gramática, vocabulario y textos con corrección'));
+  root.append(el('div', { class: 'card' }, el('h2', null, '⏱️ Simulacro express'), el('p', { class: 'muted' }, '20 preguntas mezcladas en 15 minutos. Sin pistas hasta el final, como en el examen.'), el('button', { class: 'btn primary block', onclick: () => startQuiz(pickSim(), { title: 'Simulacro express', exam: true, limit: 900 }) }, 'Empezar simulacro')));
+  const wrong = QUIZ.filter(q => Store.d.q[q.id] && Store.d.q[q.id].w);
+  if (wrong.length) root.append(el('div', { class: 'card' }, el('h2', null, '🔁 Mis fallos'), el('p', { class: 'muted' }, wrong.length + ' pregunta(s) que fallaste la última vez.'), el('button', { class: 'btn block', onclick: () => startQuiz(shuffle(wrong), { title: 'Repaso de fallos' }) }, 'Repasar ahora')));
+  root.append(el('h2', null, '📚 Textos de lectura'));
+  PASSAGES.forEach(p => {
+    const s = Store.d.passage[p.id];
+    root.append(el('button', { class: 'item', onclick: () => go({ name: 'passage', p, st: { ans: [], checked: false } }) }, el('div', { class: 'grow' }, el('b', null, p.title), el('span', { class: 'muted small' }, p.type === 'gapped' ? 'Frases en los huecos' : 'Comprensión · ' + p.qs.length + ' preguntas')), el('span', { class: 'chip' }, p.level), s ? el('span', { class: 'chip ok' }, s.c + '/' + s.t) : null));
+  });
+  root.append(el('h2', { style: 'margin-top:16px' }, '🎯 Por tema'));
+  Object.keys(TOPICS).forEach(k => {
+    const items = QUIZ.filter(q => q.topic === k);
+    const st = sumStats(Object.fromEntries(items.filter(q => Store.d.q[q.id]).map(q => [q.id, Store.d.q[q.id]])));
+    root.append(el('button', { class: 'item', onclick: () => startQuiz(shuffle(items), { title: TOPICS[k] }) }, el('div', { class: 'grow' }, el('b', null, TOPICS[k]), el('div', { class: 'bar', style: 'margin-top:6px' }, el('i', { style: 'width:' + pct(st.c, st.a) + '%' }))), el('span', { class: 'muted small' }, st.a ? pct(st.c, st.a) + '%' : items.length + ' pregs.')));
+  });
+  return root;
+};
+function finishQuiz(r) {
+  for (let k = r.res.length; k < r.items.length; k++) r.res.push({ it: r.items[k], val: null, ok: false, skipped: true });
+  if (r.exam) { Store.d.sims.push({ t: Date.now(), c: r.res.filter(x => x.ok).length, n: r.res.length }); Store.save(); }
+  go({ name: 'quiz-end', r });
+}
+function checkItem(it, val) { return it.type === 'mc' ? val === it.ans : it.answers.map(norm).includes(norm(val)); }
+function answerQuiz(r, val) {
+  const it = r.items[r.i];
+  const ok = checkItem(it, val);
+  r.res.push({ it, val, ok });
+  recQ(it.id, ok);
+  if (r.exam) nextQuiz(r); else { r.fb = { ok, val }; render(); }
+}
+function nextQuiz(r) {
+  r.i++; r.fb = null;
+  if (r.i >= r.items.length) finishQuiz(r); else render();
+}
+VIEWS['quiz-run'] = function (r) {
+  const it = r.items[r.i];
+  const root = el('div');
+  const tm = r.limit ? el('span', { class: 'chip warn', id: 'qtimer' }, '⏱ ' + mmss(r.limit - (Date.now() - r.t0) / 1000)) : null;
+  if (tm && !r.iv) {
+    r.iv = setInterval(() => {
+      const left = r.limit - (Date.now() - r.t0) / 1000;
+      const node = $('#qtimer');
+      if (node) node.textContent = '⏱ ' + mmss(left);
+      if (left <= 0) { clearInterval(r.iv); finishQuiz(r); }
+    }, 500);
+    onLeave(() => clearInterval(r.iv));
+  }
+  root.append(el('div', { class: 'row between', style: 'margin-bottom:10px' }, back({ name: 'quiz' }, 'Salir'), tm));
+  root.append(el('div', { class: 'row between' }, el('strong', null, r.title), el('span', { class: 'muted small' }, (r.i + 1) + ' / ' + r.items.length)));
+  root.append(el('div', { class: 'bar', style: 'margin:6px 0 12px' }, el('i', { style: 'width:' + (100 * r.i / r.items.length) + '%' })));
+  const card = el('div', { class: 'card' });
+  card.append(el('div', { class: 'row' }, el('span', { class: 'chip' }, TOPICS[it.topic]), el('span', { class: 'chip plain' }, it.level)));
+  card.append(el('p', { class: 'q' }, it.q));
+  if (it.type === 'mc') {
+    const box = el('div', { class: 'opts' });
+    it.opts.forEach((o, j) => {
+      let cls = 'opt';
+      if (r.fb) cls += j === it.ans ? ' correct' : (j === r.fb.val ? ' wrong' : '');
+      box.append(el('button', { class: cls, disabled: !!r.fb, onclick: () => answerQuiz(r, j) }, el('b', null, LETTERS[j]), el('span', null, o)));
+    });
+    card.append(box);
+  } else {
+    const inp = el('input', { type: 'text', autocomplete: 'off', autocapitalize: 'none', spellcheck: 'false', placeholder: 'Escribe la palabra o palabras…', disabled: !!r.fb, value: r.fb ? String(r.fb.val || '') : '', 'aria-label': 'Respuesta' });
+    const go1 = () => { if (inp.value.trim()) answerQuiz(r, inp.value); };
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') go1(); });
+    card.append(el('div', { style: 'margin-top:12px' }, inp));
+    if (!r.fb) { card.append(el('button', { class: 'btn primary block', style: 'margin-top:10px', onclick: go1 }, r.exam ? 'Siguiente' : 'Comprobar')); setTimeout(() => inp.focus(), 50); }
+  }
+  if (r.fb) {
+    card.append(el('div', { class: 'fb ' + (r.fb.ok ? 'ok' : 'bad'), role: 'status' }, el('b', null, r.fb.ok ? '✓ Correcto' : '✗ Respuesta correcta: ' + (it.type === 'mc' ? it.opts[it.ans] : it.answers[0])), fmt(it.why)));
+    card.append(el('button', { class: 'btn primary block', style: 'margin-top:10px', onclick: () => nextQuiz(r) }, r.i + 1 >= r.items.length ? 'Ver resultado' : 'Siguiente'));
+  }
+  root.append(card);
+  return root;
+};
+VIEWS['quiz-end'] = function (route0) {
+  const r = route0.r;
+  const c = r.res.filter(x => x.ok).length, t = r.res.length;
+  const root = el('div');
+  root.append(header('Resultado', r.title));
+  root.append(el('div', { class: 'card', style: 'text-align:center' }, el('div', { class: 'score' }, c + ' / ' + t), el('p', { class: 'muted' }, pct(c, t) + '% de aciertos'), pct(c, t) >= 75 ? el('span', { class: 'stamp' }, 'Aprobado') : el('span', { class: 'chip warn' }, 'Casi: repasa tus fallos')));
+  const wrong = r.res.filter(x => !x.ok);
+  if (wrong.length) {
+    root.append(el('div', { class: 'row wrap', style: 'margin-bottom:10px' }, el('button', { class: 'btn primary', onclick: () => startQuiz(shuffle(wrong.map(x => x.it)), { title: 'Repaso de fallos' }) }, '🔁 Repetir fallos (' + wrong.length + ')'), el('button', { class: 'btn', onclick: () => go({ name: 'quiz' }) }, 'Menú')));
+    root.append(el('h2', null, 'Revisa lo que fallaste'));
+    wrong.forEach(x => {
+      const it = x.it;
+      root.append(el('div', { class: 'card' }, el('p', { class: 'q' }, it.q), el('p', { class: 'small' }, x.skipped ? 'Sin contestar' : 'Tu respuesta: ' + (it.type === 'mc' ? it.opts[x.val] : x.val)), el('div', { class: 'fb ok' }, el('b', null, '✓ ' + (it.type === 'mc' ? it.opts[it.ans] : it.answers[0])), fmt(it.why))));
+    });
+  } else root.append(el('button', { class: 'btn primary block', onclick: () => go({ name: 'quiz' }) }, 'Volver al menú'));
+  return root;
+};
+
+/* ===== Textos de lectura ===== */
+VIEWS.passage = function (r) {
+  const p = r.p, st = r.st;
+  const root = el('div');
+  root.append(el('div', { style: 'margin-bottom:10px' }, back({ name: 'quiz' })), el('h1', null, p.title), el('p', { class: 'muted small' }, '💡 ' + p.tip));
+  if (p.type === 'mc') {
+    root.append(el('div', { class: 'passage' }, p.text.join('\n\n')));
+    const qs = p.qs.map(q => Object.assign({ type: 'mc' }, q));
+    if (st.checked) root.append(scoreBadge(st.score));
+    root.append(qset(qs, st, render));
+    if (!st.checked) root.append(el('button', { class: 'btn primary block', disabled: false, onclick: () => { const s = checkQset(qs, st, p.id + '-', recQ); Store.d.passage[p.id] = { c: s.c, t: s.t }; Store.save(); render(); } }, 'Comprobar respuestas'));
+  } else {
+    root.append(el('ul', { class: 'sentlist' }, Object.entries(p.sentences).map(([k, v]) => el('li', null, el('b', null, k), el('span', null, v)))));
+    const box = el('div', { class: 'passage' });
+    p.text.forEach((para, pi) => {
+      if (pi) box.append('\n\n');
+      para.split(/\{(\d)\}/).forEach((seg, k) => {
+        if (k % 2 === 0) { box.append(seg); return; }
+        const n = +seg, gap = p.gaps.find(g => g.n === n);
+        const sel = el('select', { disabled: st.checked, 'aria-label': 'Hueco ' + n }, el('option', { value: '' }, '(' + n + ')'), Object.keys(p.sentences).map(L => el('option', { value: L, selected: st.ans[n] === L }, L)));
+        sel.addEventListener('change', () => { st.ans[n] = sel.value; });
+        if (st.checked) sel.style.borderColor = st.ans[n] === gap.ans ? 'var(--ok)' : 'var(--bad)';
+        box.append(sel);
+      });
+    });
+    root.append(box);
+    if (st.checked) {
+      root.append(scoreBadge(st.score));
+      p.gaps.forEach(g => { const ok = st.ans[g.n] === g.ans; root.append(el('div', { class: 'fb ' + (ok ? 'ok' : 'bad'), style: 'margin-bottom:8px' }, el('b', null, 'Hueco ' + g.n + ': ' + (ok ? '✓ ' : '✗ era ') + g.ans), fmt(g.why))); });
+    } else {
+      root.append(el('button', { class: 'btn primary block', onclick: () => {
+        let c = 0; p.gaps.forEach(g => { const ok = st.ans[g.n] === g.ans; if (ok) c++; recQ(p.id + '-' + g.n, ok); });
+        st.checked = true; st.score = { c, t: p.gaps.length }; Store.d.passage[p.id] = { c, t: p.gaps.length }; Store.save(); render();
+      } }, 'Comprobar respuestas'));
+    }
+  }
+  return root;
+};
+
+/* ===== Listening ===== */
+VIEWS.listen = function () {
+  const root = el('div');
+  root.append(header('Listening', 'La app lee los guiones con voz en inglés'));
+  if (!TTS.ok) root.append(el('div', { class: 'fb bad' }, el('b', null, 'Sin voz disponible'), 'Tu navegador no tiene síntesis de voz. Podrás leer la transcripción después de contestar.'));
+  root.append(el('p', { class: 'muted' }, 'Lee las preguntas antes, escucha (en modo examen solo 2 veces) y contesta. Al comprobar verás el guion y la explicación.'));
+  LISTENING.forEach(it => {
+    const done = Object.keys(Store.d.listen).filter(k => k.startsWith(it.id + ':')).length;
+    root.append(el('button', { class: 'item', onclick: () => go({ name: 'listen-item', it, st: { ans: [], checked: false }, plays: 0, rate: 1, exam: true }) }, el('div', { class: 'grow' }, el('b', null, it.title), el('span', { class: 'muted small' }, it.qs.reduce((n, q) => n + (q.type === 'match' ? q.ans.length : 1), 0) + ' preguntas')), el('span', { class: 'chip' }, it.level), done ? el('span', { class: 'chip ok' }, '✓') : null));
+  });
+  return root;
+};
+VIEWS['listen-item'] = function (r) {
+  const it = r.it, st = r.st;
+  const root = el('div');
+  root.append(el('div', { style: 'margin-bottom:10px' }, back({ name: 'listen' })), el('h1', null, it.title));
+  const player = el('div', { class: 'card' });
+  const maxPlays = 2;
+  const btn = el('button', { class: 'btn primary block' });
+  const info = el('p', { class: 'muted small', style: 'margin:8px 0 0' });
+  const refreshBtn = () => {
+    const left = r.exam ? maxPlays - r.plays : null;
+    btn.textContent = TTS.playing ? '⏹ Parar' : (left === 0 ? 'Sin reproducciones' : '▶ Escuchar' + (left != null ? ' (quedan ' + left + ')' : ''));
+    btn.disabled = !TTS.ok || (!TTS.playing && left === 0);
+  };
+  btn.addEventListener('click', () => {
+    if (TTS.playing) { TTS.stop(); refreshBtn(); return; }
+    if (r.exam) r.plays++;
+    TTS.play(ttsItems(it), r.rate, () => { if (r.refresh) r.refresh(); });
+    refreshBtn();
+  });
+  r.refresh = refreshBtn;
+  refreshBtn();
+  const rateSel = el('select', { 'aria-label': 'Velocidad' }, [[0.8, 'Lenta'], [0.9, 'Algo lenta'], [1, 'Normal'], [1.1, 'Rápida']].map(([v, l]) => el('option', { value: v, selected: v === r.rate }, l)));
+  rateSel.addEventListener('change', () => { r.rate = +rateSel.value; });
+  const exam = el('input', { type: 'checkbox', id: 'exm' }); exam.checked = r.exam;
+  exam.addEventListener('change', () => { r.exam = exam.checked; refreshBtn(); });
+  player.append(btn, el('div', { class: 'row wrap', style: 'margin-top:10px' }, el('label', { class: 'row small', for: 'exm' }, exam, 'Modo examen (2 escuchas)'), el('span', { class: 'grow' }), rateSel), info);
+  if (!TTS.ok) info.textContent = 'Sin voz en este navegador: contesta con la transcripción al comprobar.';
+  else if (!TTS.voices.length) info.textContent = 'Si no oyes nada, comprueba el volumen o instala una voz en inglés en los ajustes del dispositivo.';
+  onLeave(() => TTS.stop());
+  root.append(player);
+  root.append(qset(it.qs, st, render));
+  if (!st.checked) {
+    root.append(el('button', { class: 'btn primary block', onclick: () => { TTS.stop(); const s = checkQset(it.qs, st, it.id + ':', recL); r.score = s; render(); } }, 'Comprobar respuestas'));
+  } else {
+    root.append(scoreBadge(st.score));
+    root.append(el('details', { open: true }, el('summary', null, 'Transcripción'), el('div', { class: 'transcript' }, it.lines.map(l => (l.label ? l.label + ': ' : '') + l.t).join('\n\n'))));
+    root.append(el('div', { class: 'row wrap', style: 'margin-top:10px' }, el('button', { class: 'btn', onclick: () => go({ name: 'listen-item', it, st: { ans: [], checked: false }, plays: 0, rate: r.rate, exam: r.exam }) }, '↺ Repetir'), el('button', { class: 'btn', onclick: () => go({ name: 'listen' }) }, 'Otro audio')));
+  }
+  return root;
+};
+
+/* ===== Writing ===== */
+VIEWS.write = function () {
+  const root = el('div');
+  root.append(header('Writing', 'Editor con corrector de errores típicos'));
+  root.append(el('p', { class: 'muted' }, 'Escribe como en el examen. El corrector cuenta palabras, comprueba conectores y estructuras B2, y detecta errores típicos de hispanohablantes.'));
+  [1, 2].forEach(part => {
+    root.append(el('h2', { style: 'margin-top:14px' }, part === 1 ? 'Parte 1 · Email corto (≥ 50 palabras)' : 'Parte 2 · Texto largo (≥ 180 palabras)'));
+    WRITING.filter(w => w.part === part).forEach(w => {
+      const s = Store.d.write[w.id];
+      root.append(el('button', { class: 'item', onclick: () => go({ name: 'write-edit', w }) }, el('div', { class: 'grow' }, el('b', null, w.title), el('span', { class: 'muted small' }, w.kind + ' · ' + w.register)), s && s.ok ? el('span', { class: 'chip ok' }, '✓') : (s && s.text ? el('span', { class: 'chip warn' }, 'borrador') : null)));
+    });
+  });
+  return root;
+};
+function insertAtCursor(ta, txt) {
+  const s = ta.selectionStart == null ? ta.value.length : ta.selectionStart, e = ta.selectionEnd == null ? s : ta.selectionEnd;
+  const before = ta.value.slice(0, s), after = ta.value.slice(e);
+  const sp = before && !/\s$/.test(before) ? ' ' : '';
+  ta.value = before + sp + txt + ' ' + after;
+  const pos = (before + sp + txt + ' ').length;
+  ta.focus(); try { ta.setSelectionRange(pos, pos); } catch (err) { /* nada */ }
+  ta.dispatchEvent(new Event('input'));
+}
+VIEWS['write-edit'] = function (r) {
+  const w = r.w;
+  const root = el('div');
+  root.append(el('div', { style: 'margin-bottom:10px' }, back({ name: 'write' })), el('h1', null, w.title));
+  const saved = Store.d.write[w.id] || {};
+  const checks = saved.pts || [false, false, false];
+  root.append(el('div', { class: 'card' },
+    el('div', { class: 'row' }, el('span', { class: 'chip' }, 'Parte ' + w.part), el('span', { class: 'chip plain' }, w.kind), el('span', { class: 'chip plain' }, w.register)),
+    el('p', { class: 'q', style: 'font-size:1rem' }, w.brief),
+    el('p', { class: 'small muted', style: 'margin:6px 0 2px' }, 'Cubre los tres puntos (marca cada uno al terminarlo):'),
+    w.points.map((pt, i) => { const cb = el('input', { type: 'checkbox', id: 'pt' + i }); cb.checked = !!checks[i]; cb.addEventListener('change', () => { checks[i] = cb.checked; save(); }); return el('label', { class: 'todo', for: 'pt' + i }, cb, el('span', null, pt)); })
+  ));
+  /* temporizador */
+  const timer = el('span', { class: 'chip warn' }, '⏱ ' + (w.part === 1 ? '15:00' : '25:00'));
+  let left = (w.part === 1 ? 15 : 25) * 60, iv = null;
+  const tBtn = el('button', { class: 'btn small', onclick: () => {
+    if (iv) { clearInterval(iv); iv = null; tBtn.textContent = '▶ Reanudar'; return; }
+    iv = setInterval(() => { left--; timer.textContent = '⏱ ' + mmss(left); if (left <= 0) { clearInterval(iv); iv = null; tBtn.textContent = 'Tiempo'; } }, 1000);
+    tBtn.textContent = '⏸ Pausa';
+  } }, '▶ Cronómetro');
+  onLeave(() => { if (iv) clearInterval(iv); });
+  const ta = el('textarea', { class: 'editor', placeholder: 'Escribe aquí tu respuesta…', spellcheck: 'false', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'sentences', 'aria-label': 'Tu texto' });
+  ta.value = saved.text || '';
+  const out = el('div');
+  let timeout = null;
+  function save() { const a = analyzeWriting(ta.value, w); const was = Store.d.write[w.id] && Store.d.write[w.id].ok; Store.d.write[w.id] = { text: ta.value, pts: checks, ok: !!(was || (a.ok && checks.every(Boolean))), n: a.n }; Store.save(); }
+  function draw() {
+    const a = analyzeWriting(ta.value, w);
+    const enough = a.n >= a.min;
+    out.replaceChildren(...[
+      el('div', { class: 'stats' },
+        el('div', { class: 'stat ' + (enough ? 'ok' : '') }, el('b', null, a.n + ' / ' + a.min), el('span', null, 'palabras')),
+        el('div', { class: 'stat ' + (a.found.length >= (w.part === 2 ? 4 : 2) ? 'ok' : '') }, el('b', null, a.found.length), el('span', null, 'conectores')),
+        el('div', { class: 'stat ' + (a.issues.length ? 'bad' : (a.n > 20 ? 'ok' : '')) }, el('b', null, a.issues.length), el('span', null, 'errores típicos'))),
+      el('div', { class: 'bar ' + (enough ? 'ok' : ''), style: 'margin-bottom:10px' }, el('i', { style: 'width:' + Math.min(100, pct(a.n, a.min)) + '%' })),
+      w.part === 2 ? el('div', { class: 'small', style: 'margin-bottom:8px' }, [['cond', 'condicional'], ['passive', 'pasiva'], ['relative', 'relativo'], ['contrast', 'contraste']].map(([k, l]) => el('span', { class: 'chip ' + (a.struct[k] ? 'ok' : 'plain'), style: 'margin:0 4px 4px 0' }, (a.struct[k] ? '✓ ' : '○ ') + l))) : null,
+      w.kind === 'email' && a.n > 5 ? el('div', { class: 'small', style: 'margin-bottom:8px' }, el('span', { class: 'chip ' + (a.greeting ? 'ok' : 'warn'), style: 'margin-right:4px' }, a.greeting ? '✓ saludo' : '○ falta saludo'), el('span', { class: 'chip ' + (a.signoff ? 'ok' : 'warn') }, a.signoff ? '✓ despedida' : '○ falta despedida')) : null,
+      a.issues.slice(0, 8).map(i => el('div', { class: 'issue' }, '⚠️', el('div', null, el('code', null, i.snip), ' → ', fmt(i.msg)))),
+      a.tips.map(t => el('div', { class: 'issue tip' }, '💡', el('div', null, t))),
+      !a.issues.length && a.n > 20 ? el('div', { class: 'fb ok' }, '✓ No detecto errores típicos. Revisa igualmente tiempos y ortografía.') : null
+    ].flat().filter(Boolean));
+  }
+  ta.addEventListener('input', () => { draw(); clearTimeout(timeout); timeout = setTimeout(save, 400); });
+  const bank = PHRASES[w.register === 'informal' ? 'informal' : 'formal'];
+  const tabsBox = el('div', { class: 'tabs' }), phrBox = el('div', { class: 'phr' });
+  let cur = Object.keys(bank)[0];
+  function drawBank() {
+    tabsBox.replaceChildren(...Object.keys(bank).map(k => el('button', { class: k === cur ? 'on' : '', onclick: () => { cur = k; drawBank(); } }, k)));
+    phrBox.replaceChildren(...bank[cur].map(ph => el('button', { onclick: () => insertAtCursor(ta, ph) }, ph)));
+  }
+  drawBank();
+  root.append(el('div', { class: 'row between', style: 'margin-bottom:8px' }, timer, tBtn), el('details', null, el('summary', null, '📎 Frases útiles (toca para insertar)'), tabsBox, phrBox), ta, out);
+  const copyBtn = el('button', { class: 'btn small' }, '📋 Copiar texto');
+  copyBtn.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(ta.value); copyBtn.textContent = '✓ Copiado'; } catch (e) { ta.focus(); ta.select(); copyBtn.textContent = 'Seleccionado: cópialo'; }
+    setTimeout(() => { copyBtn.textContent = '📋 Copiar texto'; }, 2500);
+  });
+  const delBtn = el('button', { class: 'btn small ghost' }, 'Borrar');
+  confirmTap(delBtn, '¿Seguro? Pulsa otra vez', () => { ta.value = ''; draw(); save(); });
+  root.append(el('div', { class: 'row wrap', style: 'margin-top:10px' }, copyBtn, delBtn));
+  draw();
+  return root;
+};
+
+/* ===== Speaking ===== */
+const SRC = window.SpeechRecognition || window.webkitSpeechRecognition;
+VIEWS.speak = function (r) {
+  const root = el('div');
+  root.append(header('Speaking', 'Responde en voz alta, con tiempo'));
+  root.append(el('div', { class: 'card' }, el('p', { style: 'margin:0' }, fmt('*' + SPEAK_TIPS.split(':')[0] + ':*' + SPEAK_TIPS.split(':').slice(1).join(':')))));
+  const cats = ['Todas', ...Array.from(new Set(SPEAKING.map(s => s.cat)))];
+  const cat = r.cat || 'Todas';
+  root.append(el('div', { class: 'tabs' }, cats.map(c => el('button', { class: c === cat ? 'on' : '', onclick: () => go({ name: 'speak', cat: c }) }, c))));
+  const list = SPEAKING.filter(s => cat === 'Todas' || s.cat === cat);
+  root.append(el('button', { class: 'btn primary block', style: 'margin-bottom:10px', onclick: () => go({ name: 'speak-run', q: list[Math.floor(Math.random() * list.length)], limit: 45 }) }, '🎲 Pregunta al azar'));
+  list.forEach(q => root.append(el('button', { class: 'item', onclick: () => go({ name: 'speak-run', q, limit: 45 }) }, el('div', { class: 'grow' }, q.scene ? el('div', null, q.scene) : null, q.q), el('span', { class: 'chip plain' }, q.cat))));
+  return root;
+};
+VIEWS['speak-run'] = function (r) {
+  const q = r.q;
+  const root = el('div');
+  root.append(el('div', { style: 'margin-bottom:10px' }, back({ name: 'speak', cat: 'Todas' })));
+  const card = el('div', { class: 'card' }, el('span', { class: 'chip' }, q.cat), q.scene ? el('div', { class: 'scene' }, q.scene) : null, el('p', { class: 'q' }, q.q));
+  root.append(card);
+  const box = el('div');
+  root.append(box);
+  const st = { phase: 'ready', mode: SRC ? 'transcribe' : 'record', limit: r.limit, base: '', fin: '', interim: '', audioUrl: null, secs: 0, micErr: false };
+  let tick = null, rec = null, mr = null, stream = null, chunks = [];
+  const text = () => (st.base + ' ' + st.fin + ' ' + st.interim).replace(/\s+/g, ' ').trim();
+  function cleanup() {
+    if (tick) { clearInterval(tick); tick = null; }
+    st.phase = st.phase === 'rec' ? 'done' : st.phase;
+    if (rec) { try { rec.onend = null; rec.stop(); } catch (e) { /* nada */ } rec = null; }
+    if (mr && mr.state !== 'inactive') { try { mr.stop(); } catch (e) { /* nada */ } }
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  }
+  onLeave(cleanup);
+  function draw() {
+    if (st.phase === 'ready') {
+      const modeRow = SRC ? el('div', { class: 'tabs' },
+        el('button', { class: st.mode === 'transcribe' ? 'on' : '', onclick: () => { st.mode = 'transcribe'; draw(); } }, '📝 Transcribir y analizar'),
+        el('button', { class: st.mode === 'record' ? 'on' : '', onclick: () => { st.mode = 'record'; draw(); } }, '🔊 Grabar mi voz')) : el('p', { class: 'muted small' }, 'Este navegador no transcribe voz: se grabará tu audio para que te escuches.');
+      const lim = el('select', { 'aria-label': 'Duración' }, [30, 45, 60].map(v => el('option', { value: v, selected: v === st.limit }, v + ' segundos')));
+      lim.addEventListener('change', () => { st.limit = +lim.value; });
+      box.replaceChildren(el('div', { class: 'card' }, modeRow, el('div', { class: 'row between' }, el('span', { class: 'muted' }, 'Tiempo para hablar'), lim), el('button', { class: 'btn primary block', style: 'margin-top:12px', onclick: start }, '🎤 Empezar (10 s para pensar)')));
+    } else if (st.phase === 'prep') {
+      box.replaceChildren(el('div', { class: 'card', style: 'text-align:center' }, el('p', { class: 'muted' }, 'Piensa tu respuesta: respuesta, razón, ejemplo'), el('div', { class: 'big-timer', id: 'bt' }, '10'), el('button', { class: 'btn', onclick: beginRec }, 'Empezar ya')));
+    } else if (st.phase === 'rec') {
+      box.replaceChildren(el('div', { class: 'card', style: 'text-align:center' }, el('div', { class: 'big-timer', id: 'bt' }, mmss(st.limit - st.secs)), el('div', { class: 'bar' }, el('i', { id: 'pb', style: 'width:0%' })), el('p', { class: 'transcript', id: 'tr', style: 'text-align:left;min-height:60px' }, st.mode === 'transcribe' ? 'Escuchando… habla con claridad.' : '🔴 Grabando…'), st.micErr ? el('div', { class: 'fb bad' }, 'No pude acceder al micrófono: habla igualmente y evalúate con la lista.') : null, el('button', { class: 'btn primary', onclick: stop }, '⏹ Terminar')));
+    } else {
+      const secs = Math.max(1, st.secs);
+      const a = analyzeSpeech(text(), secs);
+      const parts = [];
+      if (st.audioUrl) parts.push(el('div', { class: 'card' }, el('b', null, 'Tu grabación'), el('audio', { controls: true, src: st.audioUrl })));
+      if (text()) {
+        const adv = [];
+        if (a.n < 40) adv.push('Respuesta corta: amplía con una razón y un ejemplo.');
+        if (a.wpm && a.wpm < 70) adv.push('Ritmo lento (' + a.wpm + ' palabras/min): intenta enlazar ideas sin tantas pausas.');
+        if (a.wpm > 170) adv.push('Vas muy rápido (' + a.wpm + ' palabras/min): respira entre ideas.');
+        if (!a.hasReason) adv.push('Falta una razón: usa *because…* o *that\'s why…*.');
+        if (!a.hasExample) adv.push('Falta un ejemplo: usa *for example…* o cuenta algo concreto.');
+        if (a.fill.length) adv.push('Muletillas: ' + a.fill.map(f => f[0] + ' (' + f[1] + ')').join(', ') + '.');
+        parts.push(el('div', { class: 'card' }, el('b', null, 'Análisis'), el('div', { class: 'stats' },
+          el('div', { class: 'stat' }, el('b', null, a.n), el('span', null, 'palabras')),
+          el('div', { class: 'stat' }, el('b', null, a.wpm), el('span', null, 'palabras/min')),
+          el('div', { class: 'stat' }, el('b', null, a.linkers.length), el('span', null, 'conectores'))),
+          el('div', { class: 'small' }, el('span', { class: 'chip ' + (a.hasReason ? 'ok' : 'warn'), style: 'margin-right:4px' }, a.hasReason ? '✓ razón' : '○ razón'), el('span', { class: 'chip ' + (a.hasExample ? 'ok' : 'warn') }, a.hasExample ? '✓ ejemplo' : '○ ejemplo')),
+          adv.map(t => el('div', { class: 'issue tip' }, '💡', el('div', null, fmt(t)))),
+          !adv.length ? el('div', { class: 'fb ok', style: 'margin-top:8px' }, '✓ Muy buena respuesta. Prueba otra pregunta.') : null,
+          el('p', { class: 'small muted', style: 'margin:8px 0 2px' }, 'Lo que entendió el reconocimiento de voz:'), el('div', { class: 'transcript' }, text())));
+      } else {
+        parts.push(el('div', { class: 'card' }, el('b', null, 'Autoevaluación'), ['Hablé todo el tiempo sin silencios largos', 'Di respuesta + razón + ejemplo', 'Usé algún conector (because, however, for example)', 'Corregí mis errores sin empezar de nuevo'].map((t, i) => el('label', { class: 'todo', for: 'ev' + i }, el('input', { type: 'checkbox', id: 'ev' + i }), el('span', null, t)))));
+      }
+      parts.push(el('div', { class: 'row wrap' }, el('button', { class: 'btn primary', onclick: () => go({ name: 'speak-run', q: SPEAKING[Math.floor(Math.random() * SPEAKING.length)], limit: st.limit }) }, '🎲 Otra pregunta'), el('button', { class: 'btn', onclick: () => go({ name: 'speak-run', q, limit: st.limit }) }, '↺ Repetir'), el('button', { class: 'btn ghost', onclick: () => go({ name: 'speak', cat: 'Todas' }) }, 'Lista')));
+      box.replaceChildren(...parts);
+    }
+  }
+  function start() {
+    st.phase = 'prep'; let n = 10; draw();
+    tick = setInterval(() => { n--; const bt = $('#bt'); if (bt) bt.textContent = String(n); if (n <= 0) { clearInterval(tick); tick = null; beginRec(); } }, 1000);
+  }
+  async function beginRec() {
+    if (tick) { clearInterval(tick); tick = null; }
+    st.phase = 'rec'; st.secs = 0; st.base = ''; st.fin = ''; st.interim = ''; draw();
+    if (st.mode === 'transcribe' && SRC) {
+      try {
+        rec = new SRC(); rec.lang = 'en-GB'; rec.continuous = true; rec.interimResults = true;
+        rec.onresult = e => { let f = '', i2 = ''; for (let k = 0; k < e.results.length; k++) { const res = e.results[k]; if (res.isFinal) f += res[0].transcript + ' '; else i2 += res[0].transcript; } st.fin = f; st.interim = i2; const tr = $('#tr'); if (tr) tr.textContent = text() || 'Escuchando…'; };
+        rec.onend = () => { if (st.phase === 'rec' && rec) { st.base = (st.base + ' ' + st.fin).trim(); st.fin = ''; try { rec.start(); } catch (e) { /* nada */ } } };
+        rec.onerror = ev => { if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') { st.micErr = true; rec = null; const tr = $('#tr'); if (tr) tr.textContent = 'Sin permiso de micrófono.'; } };
+        rec.start();
+      } catch (e) { st.micErr = true; }
+    } else {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mr = new MediaRecorder(stream); chunks = [];
+        mr.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+        mr.onstop = () => { if (chunks.length) { st.audioUrl = URL.createObjectURL(new Blob(chunks, { type: mr.mimeType || 'audio/webm' })); if (st.phase === 'done') draw(); } };
+        mr.start();
+      } catch (e) { st.micErr = true; draw(); }
+    }
+    tick = setInterval(() => {
+      st.secs++;
+      const bt = $('#bt'), pb = $('#pb');
+      if (bt) { bt.textContent = mmss(st.limit - st.secs); bt.classList.toggle('low', st.limit - st.secs <= 10); }
+      if (pb) pb.style.width = Math.min(100, pct(st.secs, st.limit)) + '%';
+      if (st.secs >= st.limit) stop();
+    }, 1000);
+  }
+  function stop() {
+    const secs = st.secs;
+    st.phase = 'done';
+    if (tick) { clearInterval(tick); tick = null; }
+    if (rec) { st.base = (st.base + ' ' + st.fin).trim(); st.fin = ''; const rr = rec; rec = null; try { rr.onend = null; rr.stop(); } catch (e) { /* nada */ } }
+    if (mr && mr.state !== 'inactive') { try { mr.stop(); } catch (e) { /* nada */ } }
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    if (secs >= 5) { Store.d.speak.n++; Store.d.speak.runs.push({ id: q.id, t: Date.now(), s: secs }); if (Store.d.speak.runs.length > 50) Store.d.speak.runs.shift(); Store.save(); }
+    draw();
+  }
+  draw();
+  return root;
+};
+
+/* ===== Flashcards ===== */
+const INTERVALS = [0, 10, 60, 360, 1440];
+function deckStats(d) {
+  const now = Date.now();
+  let due = 0, known = 0;
+  d.cards.forEach((c, i) => { const s = Store.d.cards[d.id + ':' + i]; if (!s || s.d <= now) due++; if (s && s.b >= 2) known++; });
+  return { due, known, total: d.cards.length };
+}
+function startCards(ids, dir) {
+  const now = Date.now();
+  const pool = [];
+  ids.forEach(id => { const d = DECKS.find(x => x.id === id); d.cards.forEach((c, i) => pool.push({ id: id + ':' + i, c, deck: d.title })); });
+  let queue = shuffle(pool.filter(x => { const s = Store.d.cards[x.id]; return !s || s.d <= now; })).slice(0, 20);
+  if (!queue.length) queue = shuffle(pool).slice(0, 20);
+  go({ name: 'cards-run', queue, i: 0, flipped: false, dir, total: queue.length, know: 0, again: 0, req: {} });
+}
+VIEWS.cards = function (r) {
+  const dir = r.dir || 'en';
+  const root = el('div');
+  root.append(header('Flashcards', 'Repaso espaciado: lo que fallas vuelve antes'));
+  root.append(el('div', { class: 'tabs' }, el('button', { class: dir === 'en' ? 'on' : '', onclick: () => go({ name: 'cards', dir: 'en' }) }, 'Inglés → Español'), el('button', { class: dir === 'es' ? 'on' : '', onclick: () => go({ name: 'cards', dir: 'es' }) }, 'Español → Inglés')));
+  root.append(el('button', { class: 'btn primary block', style: 'margin-bottom:12px', onclick: () => startCards(DECKS.map(d => d.id), dir) }, '▶ Sesión mixta (20 cartas)'));
+  DECKS.forEach(d => {
+    const s = deckStats(d);
+    root.append(el('button', { class: 'item', onclick: () => startCards([d.id], dir) }, el('span', { style: 'font-size:1.5rem' }, d.icon), el('div', { class: 'grow' }, el('b', null, d.title), el('div', { class: 'bar', style: 'margin-top:6px' }, el('i', { style: 'width:' + pct(s.known, s.total) + '%' }))), el('span', { class: 'chip ' + (s.due ? 'warn' : 'ok') }, s.due + ' pend.')));
+  });
+  return root;
+};
+VIEWS['cards-run'] = function (r) {
+  const root = el('div');
+  const cur = r.queue[r.i];
+  root.append(el('div', { class: 'row between', style: 'margin-bottom:10px' }, back({ name: 'cards', dir: r.dir }, 'Salir'), el('span', { class: 'muted small' }, (r.i + 1) + ' / ' + r.queue.length)));
+  root.append(el('div', { class: 'bar', style: 'margin-bottom:12px' }, el('i', { style: 'width:' + (100 * r.i / r.queue.length) + '%' })));
+  const [en, es, ex] = cur.c;
+  const front = r.dir === 'en' ? en : es, backT = r.dir === 'en' ? es : en;
+  const card = el('div', { class: 'card flash', role: 'button', tabindex: '0', onclick: () => { if (!r.flipped) { r.flipped = true; render(); } } },
+    el('div', null, el('span', { class: 'chip plain' }, cur.deck), el('div', { class: 'front', style: 'margin-top:8px' }, front),
+      r.flipped ? el('div', { style: 'margin-top:14px' }, el('div', { class: 'front', style: 'color:var(--accent);font-size:1.35rem' }, backT), ex ? el('div', { class: 'ex' }, ex) : null) : el('div', { class: 'hint', style: 'margin-top:14px' }, 'Toca para ver la respuesta')));
+  root.append(card);
+  if (r.flipped) {
+    const rate = kind => {
+      const key = cur.id, s = Store.d.cards[key] || { b: 0, d: 0 };
+      if (kind === 'know') { s.b = Math.min(4, s.b + 1); r.know++; }
+      else if (kind === 'again') { s.b = 0; r.again++; if (!r.req[key]) { r.req[key] = true; r.queue.push(cur); } }
+      s.d = Date.now() + INTERVALS[s.b] * 60000;
+      Store.d.cards[key] = s; Store.save();
+      r.i++; r.flipped = false;
+      if (r.i >= r.queue.length) go({ name: 'cards-end', r }); else render();
+    };
+    root.append(el('div', { class: 'grid3', style: 'margin-top:12px' }, el('button', { class: 'btn', onclick: () => rate('again') }, '😵 No la sé'), el('button', { class: 'btn', onclick: () => rate('almost') }, '🤔 Casi'), el('button', { class: 'btn primary', onclick: () => rate('know') }, '😎 La sé')));
+  }
+  return root;
+};
+VIEWS['cards-end'] = function (route0) {
+  const r = route0.r;
+  const root = el('div');
+  root.append(header('Sesión terminada', 'Buen trabajo'));
+  root.append(el('div', { class: 'card', style: 'text-align:center' }, el('div', { class: 'score' }, r.know + ' / ' + r.total), el('p', { class: 'muted' }, 'cartas dominadas en esta sesión'), r.again ? el('p', { class: 'small' }, r.again + ' vez/veces marcaste "No la sé": volverán pronto.') : el('span', { class: 'stamp' }, 'Perfecto')));
+  root.append(el('div', { class: 'row wrap' }, el('button', { class: 'btn primary', onclick: () => startCards(DECKS.map(d => d.id), r.dir) }, '▶ Otra sesión'), el('button', { class: 'btn', onclick: () => go({ name: 'cards', dir: r.dir }) }, 'Mazos')));
+  return root;
+};
+
+/* ===== Arranque ===== */
+function boot() {
+  Store.load();
+  TTS.init();
+  document.querySelectorAll('.nav button').forEach(b => b.addEventListener('click', () => go({ name: b.dataset.tab })));
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; if (route.name === 'home') render(); });
+  render();
+  try {
+    if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => { /* sin SW */ });
+  } catch (e) { /* entorno sin service workers */ }
+}
+window.GP = { QUIZ, PASSAGES, LISTENING, DECKS, WRITING, SPEAKING, LINT_RULES, analyzeWriting, analyzeSpeech, stamps, Store, go, pickSim, isOk, norm, getRoute: () => route };
+boot();
+
+})();
+</script>
+</body>
+</html>
